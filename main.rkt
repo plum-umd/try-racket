@@ -17,7 +17,7 @@
           net/base64
 ;          racket/gui/base ; ensures that `make-ev` does not try to instantiate it multiple times
           "autocomplete.rkt"
-          )
+          racket/string)
 
 (define APPLICATION/JSON-MIME-TYPE #"application/json;charset=utf-8")
 
@@ -53,20 +53,17 @@
 
 ;; (Listof jsexpr -> jsexpr)
 (define (hack-result-list reses)
-  (for/fold ([acc (hasheq)]) ([res reses])
-    (match res
-      [(hash-table ['expr expr] ['error _] ['message msg] _ ...)
-       (hash-update
-        (hash-set acc 'expr expr)
-        'result ; HACK
-        (λ (msg0) (format "~a~n~a" msg0 msg))
-        (λ () ""))]
-      [(hash-table ['expr expr] ['result result] _ ...)
-       (hash-update
-        (hash-set acc 'expr expr)
-        'result
-        (λ (result0) (format "~a~n~a" result0 result))
-        (λ () ""))])))
+  (hasheq
+   'expr (if (null? reses) "" (hash-ref (car reses) 'expr))
+   'result (string-join
+            (for/list ([res reses])
+              (format
+               "~a"
+               (match res
+                 [(hash-table ['message m] _ ...) m]
+                 [(hash-table ['result r] _ ...) r])))
+            "\n\n"
+            #:before-first "\n")))
 
 ;; Handle arbitrary number of results, gathered into a list
 (define-syntax-rule (zero-or-more e)
