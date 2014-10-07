@@ -38,21 +38,14 @@
   (parameterize ([sandbox-output 'string]
                  [sandbox-error-output 'string]
                  [sandbox-propagate-exceptions #f]
-                 [sandbox-memory-limit 30]
-                 [sandbox-eval-limits (list 5 30)]
+                 [sandbox-memory-limit 100]
+                 [sandbox-eval-limits (list 5 100)]
                  [sandbox-namespace-specs
                   (append (sandbox-namespace-specs)
                           `(file/convertible
                             json))]
                  [sandbox-path-permissions '((read #rx#"racket-prefs.rktd"))])
-    (make-evaluator 'racket/base
-                    #:requires `(pict
-                                 pict/flash
-                                 pict/code
-                                 file/convertible
-                                 json
-                                 ,autocomplete
-                                 (planet schematics/random:1:0/random)))))
+    (make-evaluator 'scpcf/heap/lang)))
 
 
 (define (run-code ev str)
