@@ -165,27 +165,28 @@ function onHandle(line, report) {
 			return;
 		}
     // perform evaluation
-    var data = eval_racket(input);
+    var datas = eval_racket(input);
+    var results = [];
 
     // handle error
-    if (data.error) {
-        return [{msg: data.message, className: "jquery-console-message-error"}];
+    for (var i = 0; i < datas.length; i++) {
+	var data = datas[i];
+	if (data.error) {
+	    results.push({msg: data.message, className: "jquery-console-message-error"});
+	} else if (/#\"data:image\/png;base64,/.test(data.result)) {
+            $('.jquery-console-inner').append('<img src="' + data.result.substring(2) + " />");
+            controller.scrollToBottom();
+	    results.push({msg: "", className: "jquery-console-message-value"});
+	} else {
+	    results.push({msg: data.result, className: "jquery-console-message-value"});
+	}
     }
     
-    // handle page
-    if (currentPage >= 0 && pageExitConditions[currentPage].verify(data)) {
+    // handle page (TODO disable for now, may need later)
+    /*if (currentPage >= 0 && pageExitConditions[currentPage].verify(data)) {
   			goToPage(currentPage + 1);
-    }
-    
-    
-    // display expr results
-    if(/#\"data:image\/png;base64,/.test(data.result)){
-        $('.jquery-console-inner').append('<img src="' + data.result.substring(2) + " />");
-        controller.scrollToBottom();
-        return [{msg: "", className: "jquery-console-message-value"}];
-    }
-    else
-        return [{msg: data.result, className: "jquery-console-message-value"}];
+    }*/
+    return results;
 }
 
 /**
@@ -210,7 +211,7 @@ function changerUpdated() {
 var controller;
 $(document).ready(function() {
     controller = $("#console").console({
-        welcomeMessage:'Make some Racket!',
+        welcomeMessage:'Make some SCPCF!',
         promptLabel: '> ',
         commandValidate: onValidate,
         commandHandle: onHandle,

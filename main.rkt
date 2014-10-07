@@ -51,20 +51,6 @@
                                             '((read #rx#"racket-prefs.rktd")))])
     (make-evaluator 'scpcf/heap/lang)))
 
-;; (Listof jsexpr -> jsexpr)
-(define (hack-result-list reses)
-  (hasheq
-   'expr (if (null? reses) "" (hash-ref (car reses) 'expr))
-   'result (string-join
-            (for/list ([res reses])
-              (format
-               "~a"
-               (match res
-                 [(hash-table ['message m] _ ...) m]
-                 [(hash-table ['result r] _ ...) r])))
-            "\n\n"
-            #:before-first "\n")))
-
 ;; Handle arbitrary number of results, gathered into a list
 (define-syntax-rule (zero-or-more e)
   (call-with-values (λ () e) (λ xs xs)))
@@ -206,7 +192,7 @@
          (let ([expr (extract-binding/single 'expr bindings)])
            (make-response
             #:mime-type APPLICATION/JSON-MIME-TYPE
-            (jsexpr->string (hack-result-list (result-json expr (run-code ev expr))))))]
+            (jsexpr->string (result-json expr (run-code ev expr)))))]
          [(exists-binding? 'complete bindings)
           (let ([str (extract-binding/single 'complete bindings)])
             (make-response 
@@ -262,6 +248,5 @@
    #:servlet-path "/"
    #:manager mgr
    #:log-file "try-racket-serve-log.txt"))
-
 
 
