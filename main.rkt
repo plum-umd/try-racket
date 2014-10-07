@@ -45,15 +45,14 @@
                           `(file/convertible
                             json))]
                  [sandbox-path-permissions '((read #rx#"racket-prefs.rktd"))])
-    ((lambda () 
-       (make-evaluator 'racket/base
-                       #:requires `(pict
-                                    pict/flash
-                                    pict/code
-                                    file/convertible
-                                    json
-                                    ,autocomplete
-                                    (planet schematics/random:1:0/random)))))))
+    (make-evaluator 'racket/base
+                    #:requires `(pict
+                                 pict/flash
+                                 pict/code
+                                 file/convertible
+                                 json
+                                 ,autocomplete
+                                 (planet schematics/random:1:0/random)))))
 
 
 (define (run-code ev str)
