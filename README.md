@@ -15,6 +15,14 @@ Slight additional modifications have since been made to remove dependencies on X
     
 	Open http://localhost:8080 in your browser
 
+## Temporary hack to run SCPCF locally:
+
+* You need to modify your own version of Racket in the file
+  `/Racket/share/pkgs/gui-lib/mred/private/wx/gtk/platform.rkt`,
+  where the `provide` line is changed from
+  `(provide (protect-out platform-values))`
+  to just `(provide platform-values)`
+
 ## Online host
 
 Try Racket is hosted online at http://try-racket.org and http://try.racket-lang.org
