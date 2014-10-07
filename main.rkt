@@ -44,7 +44,11 @@
                   (append (sandbox-namespace-specs)
                           `(file/convertible
                             json))]
-                 [sandbox-path-permissions '((read #rx#"racket-prefs.rktd"))])
+                 [sandbox-path-permissions (list* ; FIXME hack³
+                                            (list 'write "/var/tmp")
+                                            (list 'write "/tmp")
+                                            (list 'execute "/bin/sh")
+                                            '((read #rx#"racket-prefs.rktd")))])
     (make-evaluator 'scpcf/heap/lang)))
 
 ;; (Listof jsexpr -> jsexpr)
@@ -53,8 +57,8 @@
     (match res
       [(hash-table ['expr expr] ['error _] ['message msg] _ ...)
        (hash-update
-        (hash-set (hash-set acc 'expr expr) 'error #true)
-        'message
+        (hash-set acc 'expr expr)
+        'result ; HACK
         (λ (msg0) (format "~a~n~a" msg0 msg))
         (λ () ""))]
       [(hash-table ['expr expr] ['result result] _ ...)
@@ -205,9 +209,7 @@
          (let ([expr (extract-binding/single 'expr bindings)])
            (make-response
             #:mime-type APPLICATION/JSON-MIME-TYPE
-            (let ([res (jsexpr->string (hack-result-list (result-json expr (run-code ev expr))))])
-              (printf "Result: ~a~n" res)
-              res)))]
+            (jsexpr->string (hack-result-list (result-json expr (run-code ev expr))))))]
          [(exists-binding? 'complete bindings)
           (let ([str (extract-binding/single 'complete bindings)])
             (make-response 

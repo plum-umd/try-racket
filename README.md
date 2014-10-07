@@ -23,6 +23,18 @@ Slight additional modifications have since been made to remove dependencies on X
   `(provide (protect-out platform-values))`
   to just `(provide platform-values)`
 
+### TODO
+
+Fix current hacks to get SCPCF working:
+
+* Path permissions in `/var/tmp`, `/tmp`, and `/bin/sh` to have `Z3` running.
+  While the language SCPCF is pure and I don't see much risk,
+  I'm sure there is a proper way to do this.
+* The error `name platform-values is protected`
+* The original interpreter is meant for deterministic evaluation.
+  I get around this by merging all results (values + errors) into the "value" channel.
+  As a consequence, errors are blue like values, not red.
+
 ## Online host
 
 Try Racket is hosted online at http://try-racket.org and http://try.racket-lang.org
