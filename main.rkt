@@ -25,7 +25,7 @@
 
 
 ;; Paths
-(define autocomplete 
+(define autocomplete
   (build-path (current-directory) "autocomplete.rkt"))
 
 ;;------------------------------------------------------------------
@@ -47,20 +47,33 @@
                  [sandbox-path-permissions '((read #rx#"racket-prefs.rktd"))])
     (make-evaluator 'scpcf/heap/lang)))
 
+;; (Listof jsexpr -> jsexpr)
+(define (hack-result-list reses)
+  (for/fold ([acc (hasheq)]) ([res reses])
+    (match res
+      [(hash-table ['expr expr] ['error _] ['message msg] _ ...)
+       (hash-update
+        (hash-set (hash-set acc 'expr expr) 'error #true)
+        'message
+        (λ (msg0) (format "~a~n~a" msg0 msg))
+        (λ () ""))]
+      [(hash-table ['expr expr] ['result result] _ ...)
+       (hash-update
+        (hash-set acc 'expr expr)
+        'result
+        (λ (result0) (format "~a~n~a" result0 result))
+        (λ () ""))])))
+
+;; Handle arbitrary number of results, gathered into a list
+(define-syntax-rule (zero-or-more e)
+  (call-with-values (λ () e) (λ xs xs)))
 
 (define (run-code ev str)
-  (define res (ev str)) 
-  (define out (get-output ev))
-  (define err (get-error-output ev))  
-  (cond [(convertible? res)
-         (define res-convert (ev `(convert ',res 'png-bytes)))
-         ;; run 'convert' in the sandbox for safety reasons
-         (list (~v (bytes-append #"data:image/png;base64,"
-                                 (base64-encode res-convert #"")))
-               #f #f)]
-        [else      (list (if (void? res) "" (format "~v" res))
-                         (and (not (equal? out "")) out)
-                         (and (not (equal? err "")) err))]))
+  (define vals (zero-or-more (ev str))) 
+  (define errs (zero-or-more (get-error-output ev)))
+  (append
+   (for/list ([val vals]) (list (format "~a" val) #f #f))
+   (for/list ([err errs] #:unless (equal? err "")) (list "" #f err))))
 
 (define (complete-code ev str)
   (define res (ev  `(jsexpr->string (namespace-completion ,str)))) 
@@ -154,15 +167,16 @@
 (define (json-result expr res)
   (hasheq 'expr expr 'result res))
 
-;; string eval-result -> jsexpr
-(define (result-json expr lst)
-   (match lst
-     ((list res #f #f) 
-      (json-result expr res))
-     ((list res out #f) 
-      (json-result expr (string-append out res)))
-     ((list _ _ err)
-      (json-error expr err))))
+;; string (Listof eval-result) -> (Listof jsexpr)
+(define (result-json expr lsts)
+  (for/list ([lst lsts])
+    (match lst
+      [(list res #f #f) 
+       (json-result expr res)]
+      [(list res out #f) 
+       (json-result expr (string-append out res))]
+      [(list _ _ err)
+       (json-error expr err)])))
 
 
 (module+ test
@@ -189,9 +203,11 @@
   (define bindings (request-bindings request))
   (cond [(exists-binding? 'expr bindings)
          (let ([expr (extract-binding/single 'expr bindings)])
-           (make-response 
+           (make-response
             #:mime-type APPLICATION/JSON-MIME-TYPE
-            (jsexpr->string (result-json expr (run-code ev expr)))))]
+            (let ([res (jsexpr->string (hack-result-list (result-json expr (run-code ev expr))))])
+              (printf "Result: ~a~n" res)
+              res)))]
          [(exists-binding? 'complete bindings)
           (let ([str (extract-binding/single 'complete bindings)])
             (make-response 
