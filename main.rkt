@@ -49,7 +49,7 @@
                                             (list 'write "/tmp")
                                             (list 'execute "/bin/sh")
                                             '((read #rx#"racket-prefs.rktd")))])
-    (make-evaluator 'scpcf/heap/lang)))
+    (make-evaluator 'soft-contract/lang/reader)))
 
 ;; Handle arbitrary number of results, gathered into a list
 (define-syntax-rule (zero-or-more e)

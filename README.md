@@ -10,6 +10,11 @@ Try Racket is written in Racket and JavaScript with Chris Done's [jquery-console
 Slight additional modifications have since been made to remove dependencies on X11 by John Berry, with help from many others in the Racket community. Please note that the REPL and its server are still to some extent a work in progress, and community contribution is vigorously encouraged. Pull requests will likely be met with cheer, though we ask that you try to give it a little bit of testing before submitting (and we will do same as well before pushing to the live server).
 
 ## How to run it locally
+
+1. Clone the `both` branch in `soft-contract`. Inside the directory, run:
+
+    raco pkg install
+2. Run locally
     
     $ racket main.rkt
     
