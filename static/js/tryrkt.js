@@ -1,4 +1,4 @@
-var currentPage = -1;
+/*var currentPage = -1;
 var pages = [
 			"intro",
 			"go",
@@ -67,7 +67,7 @@ function goToPage(pageNumber) {
 		});
 	});
 }
-
+*/
 function setupLink(url) {
     return function(e) { $("#changer").load(url, function(data) { $("#changer").html(data); }); }
 }
@@ -94,7 +94,53 @@ function eval_racket(code) {
     return data;
 }
 
-function complete_racket(str){
+function check() {
+    var results = eval_racket(document.getElementById("console").value);
+    console.log(results);
+    onResults(results);
+}
+
+function onResults(results) {
+    var changer = document.getElementById("changer_result");
+    log("Changer", changer);
+    while (changer.firstChild) {
+	changer.removeChild(changer.firstChild);
+    }
+    log("Results", results);
+    for (var i in results) {
+	appendResult(changer, results[i]);
+    }
+    console.log(changer);
+}
+
+function appendResult(changer, result) {
+    log("Result", result);
+    if (result.result) {
+	console.log(result.result);
+	changer.appendChild(createP(result.result, "value"));
+    } else if (result.error) {
+	console.log(result.message);
+	changer.appendChild(createP(result.message, "error"));
+    }
+    console.log(changer);
+}
+
+function createP(text, classs) {
+    var p = document.createElement("div");
+    var t = document.createTextNode(text);
+    var a = document.createAttribute("class");
+    a.value = classs;
+    p.appendChild(t);
+    p.setAttributeNode(a);
+    return p;
+}
+
+function log(label, content) {
+    console.log(label + ": ");
+    console.log(content);
+}
+
+/*function complete_racket(str){
     var data;
     $.ajax({
         url: evalUrl,
@@ -103,9 +149,10 @@ function complete_racket(str){
         success: function(res) { data = res; },
     });
     return data;
-}
+}*/
 
-function doCommand(input) {
+/*function doCommand(input) {
+    console.log(input)
 		if (input.match(/^gopage /)) {
 				goToPage(parseInt(input.substring("gopage ".length)));
 				return true;
@@ -130,7 +177,7 @@ function doCommand(input) {
     default:
         return false;
     }
-}
+}*/
 
 function onValidate(input) {
     return (input != "");
@@ -158,12 +205,13 @@ function onComplete(line) {
     
 
 function onHandle(line, report) {
+    console.log("onHandle called");
     var input = $.trim(line);
     // handle commands
-    if (doCommand(input)) {
+    /*if (doCommand(input)) {
 			report();
 			return;
-		}
+		}*/
     // perform evaluation
     var datas = eval_racket(input);
     var results = [];
@@ -212,16 +260,17 @@ var controller;
 $(document).ready(function() {
     controller = $("#console").console({
         welcomeMessage:'Make some SCPCF!',
-        promptLabel: '> ',
+        promptLabel: '>> ',
         commandValidate: onValidate,
         commandHandle: onHandle,
         completeHandle: onComplete,
         autofocus:true,
         animateScroll:true,
-        promptHistory:true,
+        promptHistory:false,
         cols:1
     });
-    $("#about").click(setupLink("about"));
-    $("#links").click(setupLink("links"));
+    console.log(controller);
+    //$("#about").click(setupLink("about"));
+    //$("#links").click(setupLink("links"));
     changerUpdated();
 });

@@ -82,6 +82,19 @@ body {
  font-weight:bold;
 }
 
+.error{
+ color:#ef0505;
+ font-family:monospace;
+ padding:0.1em;
+ white-space: pre;
+}
+
+.value{
+ color:#0066FF;
+ font-family:monospace;
+ padding:0.1em;
+}
+
 
 #buttons {
 text-align: left;
