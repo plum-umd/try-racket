@@ -42,7 +42,7 @@
                  [sandbox-error-output 'string]
                  [sandbox-propagate-exceptions #f]
                  [sandbox-memory-limit 200]
-                 [sandbox-eval-limits (list 5 200)]
+                 [sandbox-eval-limits (list 30 200)]
                  [sandbox-namespace-specs
                   (append (sandbox-namespace-specs)
                           `(file/convertible
@@ -52,10 +52,7 @@
                                             (list 'write "/tmp")
                                             (list 'execute "/bin/sh")
                                             '((read #rx#"racket-prefs.rktd")))])
-    (make-evaluator 'soft-contract/lang/reader)
-    #;(λ (x)
-      (printf "~a: ~a~n" (next!) x)
-      "ok")))
+    (make-evaluator 'soft-contract)))
 
 ;; Handle arbitrary number of results, gathered into a list
 (define-syntax-rule (zero-or-more e)
@@ -195,7 +192,8 @@
 (define (eval-with ev request) 
   (define bindings (request-bindings request))
   (cond [(exists-binding? 'expr bindings)
-         (let ([expr (#|HACK|# format "(~a)" (extract-binding/single 'expr bindings))])
+         (let ([expr (extract-binding/single 'expr bindings)
+                     #;(#|HACK|# format "(~a)" (extract-binding/single 'expr bindings))])
            (printf "expr:~n~a~n" expr)
            (make-response
             #:mime-type APPLICATION/JSON-MIME-TYPE
@@ -249,11 +247,9 @@
    #:connection-close? #t
    #:quit? #f 
    #:listen-ip #f 
-   #:port 3456
+   #:port 8080
    #:servlet-regexp #rx""
    #:extra-files-paths (list static)
    #:servlet-path "/"
    #:manager mgr
    #:log-file "try-racket-serve-log.txt"))
-
-
