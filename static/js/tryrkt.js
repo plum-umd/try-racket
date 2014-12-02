@@ -1,3 +1,74 @@
+var samples = {
+  argmin: "(module holes\
+\n  (provide [proc (-> any/c number?)]\
+\n	   [lst (nelistof any/c)]))\
+\n\
+\n(module min\
+\n  (provide [min (real? real? . -> . real?)])\
+\n  (define (min x y)\
+\n    (if (< x y) x y)))\
+\n\
+\n(module argmin\
+\n  (provide [argmin ((-> any/c number?) (nelistof any/c) . -> . any/c)])\
+\n  (require min)\
+\n  (define (argmin f xs)\
+\n    (cond [(empty? (cdr xs)) (f (car xs))]\
+\n	  [else (min (f (car xs))\
+\n		     (argmin f (cdr xs)))])))",
+  braun_tree:"(module tree\
+\n  (provide\
+\n   [braun-tree? (any/c . -> . boolean?)]\
+\n   [insert (braun-tree? any/c . -> . braun-tree?)])\
+\n  \
+\n  (struct node (v l r))\
+\n\
+\n  (define (braun-tree? x)\
+\n    (or (false? x)\
+\n	(and (node? x)\
+\n	     (braun-tree? (node-l x))\
+\n	     (braun-tree? (node-r x))\
+\n	     (let ([l (size (node-l x))]\
+\n		   [r (size (node-r x))])\
+\n	       (or (= l r) (= l (add1 r)))))))\
+\n  \
+\n  (define (size x)\
+\n    (if (node? x)\
+\n        (add1 (+ (size (node-l x)) (size (node-r x))))\
+\n        0))\
+\n  \
+\n  (define (insert bt x)\
+\n    (if (node? bt)\
+\n        (node (node-v bt) (insert (#|HERE|#node-l bt) x) (node-r bt))\
+\n        (node x #f #f))))",
+
+  div100: "(module f\
+\n  (provide [f (integer? . -> . integer?)])\
+\n  (define (f n)\
+\n    (/ 1 (- 100 n))))"
+}
+
+function loadSamples() {
+    var selections = document.getElementById("samples");
+    for (var sampleName in samples) {
+	var option = document.createElement("option");
+	var a = document.createAttribute("value");
+	a.value = sampleName;
+	var t = document.createTextNode(sampleName)
+	option.appendChild(t);
+	option.setAttributeNode(a);
+	selections.appendChild(option);
+    }
+}
+
+function loadSample(sampleName) {
+    var text = document.createTextNode(samples[sampleName]);
+    var edit = document.getElementById("console");
+    while (edit.firstChild) {
+	edit.removeChild(edit.firstChild);
+    }
+    edit.appendChild(text);
+}
+
 /*var currentPage = -1;
 var pages = [
 			"intro",
@@ -95,34 +166,34 @@ function eval_racket(code) {
 }
 
 function check() {
+    setMessage("Verifying...", "timeout");
+    console.log("About to verify");
     var results = eval_racket(document.getElementById("console").value);
+    console.log("Results:");
     console.log(results);
-    onResults(results);
+    setResult(results[0]); // better be a singleton
 }
 
-function onResults(results) {
+function setResult(result) {
+    console.log("Result:");
+    console.log(result);
+    if (result.result) {
+	setMessage(result.result, "value");
+    } else if (result.error) {
+	setMessage(result.message, "error");
+    }
+}
+
+function setMessage(msg, classs) {
+    console.log("setMessage:");
+    console.log([msg, classs]);
+    // Clear previous message
     var changer = document.getElementById("changer_result");
-    log("Changer", changer);
     while (changer.firstChild) {
 	changer.removeChild(changer.firstChild);
     }
-    log("Results", results);
-    for (var i in results) {
-	appendResult(changer, results[i]);
-    }
-    console.log(changer);
-}
-
-function appendResult(changer, result) {
-    log("Result", result);
-    if (result.result) {
-	console.log(result.result);
-	changer.appendChild(createP(result.result, "value"));
-    } else if (result.error) {
-	console.log(result.message);
-	changer.appendChild(createP(result.message, "error"));
-    }
-    console.log(changer);
+    // Append new message
+    changer.appendChild(createP(msg, classs));
 }
 
 function createP(text, classs) {
@@ -133,11 +204,6 @@ function createP(text, classs) {
     p.appendChild(t);
     p.setAttributeNode(a);
     return p;
-}
-
-function log(label, content) {
-    console.log(label + ": ");
-    console.log(content);
 }
 
 /*function complete_racket(str){
@@ -203,7 +269,8 @@ function onComplete(line) {
     }
 }
     
-
+/** This function is no longer used,
+ but i'm leaving it uncommented for now cos it's referenced below */
 function onHandle(line, report) {
     console.log("onHandle called");
     var input = $.trim(line);
@@ -219,8 +286,13 @@ function onHandle(line, report) {
     // handle error
     for (var i = 0; i < datas.length; i++) {
 	var data = datas[i];
+	console.log(data);
 	if (data.error) {
 	    results.push({msg: data.message, className: "jquery-console-message-error"});
+	} else if (data.timeout) {
+	    results.push({msg: "Timeout.", className: "jquery-console-message-timeout"});
+	} else if (data.safe) {
+	    results.push({msg: "Program is safe.", className: "jquery-console-message-value"});
 	} else if (/#\"data:image\/png;base64,/.test(data.result)) {
             $('.jquery-console-inner').append('<img src="' + data.result.substring(2) + " />");
             controller.scrollToBottom();
@@ -274,3 +346,4 @@ $(document).ready(function() {
     //$("#links").click(setupLink("links"));
     changerUpdated();
 });
+

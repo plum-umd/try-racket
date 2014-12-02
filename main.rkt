@@ -17,11 +17,16 @@
           net/base64
 ;          racket/gui/base ; ensures that `make-ev` does not try to instantiate it multiple times
           "autocomplete.rkt"
-          racket/string)
+          racket/string
+          racket/port
+          racket/list
+          racket/file)
 
 (define APPLICATION/JSON-MIME-TYPE #"application/json;charset=utf-8")
 
 (module+ test (require rackunit))
+
+(define out-root-path "/tmp") ; FIXME
 
 
 ;; Paths
@@ -42,7 +47,7 @@
                  [sandbox-error-output 'string]
                  [sandbox-propagate-exceptions #f]
                  [sandbox-memory-limit 200]
-                 [sandbox-eval-limits (list 30 200)]
+                 [sandbox-eval-limits (list 40 200)]
                  [sandbox-namespace-specs
                   (append (sandbox-namespace-specs)
                           `(file/convertible
@@ -59,11 +64,12 @@
   (call-with-values (λ () e) (λ xs xs)))
 
 (define (run-code ev str)
-  (define vals (zero-or-more (ev str))) 
-  (define errs (zero-or-more (get-error-output ev)))
-  (append
-   (for/list ([val vals]) (list (format "~a" val) #f #f))
-   (for/list ([err errs] #:unless (equal? err "")) (list "" #f err))))
+  (define val (ev str)) 
+  (define err (get-error-output ev))
+  (define out (get-output ev))
+  (list (list (if (void? val) "" (format "~a" val))
+              (and (not (equal? "" out)) out)
+              (and (not (equal? "" err)) err))))
 
 (define (complete-code ev str)
   (define res (ev  `(jsexpr->string (namespace-completion ,str)))) 
@@ -119,9 +125,6 @@
      ("where" (include-template "templates/tutorial/where.html"))
      ("end" (include-template "templates/tutorial/end.html")))))
     
-
-
-
 ;; Links page
 (define (links request)
     (make-response
@@ -168,7 +171,6 @@
       [(list _ _ err)
        (json-error expr err)])))
 
-
 (module+ test
  (define ev (make-ev))
  (define (eval-result-to-json expr)
@@ -192,20 +194,22 @@
 (define (eval-with ev request) 
   (define bindings (request-bindings request))
   (cond [(exists-binding? 'expr bindings)
-         (let ([expr (extract-binding/single 'expr bindings)
-                     #;(#|HACK|# format "(~a)" (extract-binding/single 'expr bindings))])
-           (printf "expr:~n~a~n" expr)
-           (make-response
-            #:mime-type APPLICATION/JSON-MIME-TYPE
-            (jsexpr->string (result-json expr (run-code ev expr)))))]
-         [(exists-binding? 'complete bindings)
-          (let ([str (extract-binding/single 'complete bindings)])
-            (make-response 
-             #:mime-type APPLICATION/JSON-MIME-TYPE
-             (jsexpr->string 
-              (result-json "" (complete-code ev str)))))]
+         (define expr (extract-binding/single 'expr bindings))
+         (save-expr expr)
+         (make-response
+          #:mime-type APPLICATION/JSON-MIME-TYPE
+          (jsexpr->string (result-json expr (run-code ev expr))))]
+        [(exists-binding? 'complete bindings)
+         (define str (extract-binding/single 'complete bindings))
+         (make-response 
+          #:mime-type APPLICATION/JSON-MIME-TYPE
+          (jsexpr->string 
+           (result-json "" (complete-code ev str))))]
         [else (make-response #:code 400 #:message #"Bad Request" "")]))
-      
+
+(define (save-expr expr)
+  (define fn (format "~a/programs/~a.sch" out-root-path (current-milliseconds)))
+  (display-to-file expr fn #:exists 'append))
 
 
 ;;------------------------------------------------------------------
@@ -247,9 +251,13 @@
    #:connection-close? #t
    #:quit? #f 
    #:listen-ip #f 
-   #:port 8080
+   #:port 3456
    #:servlet-regexp #rx""
    #:extra-files-paths (list static)
    #:servlet-path "/"
    #:manager mgr
    #:log-file "try-racket-serve-log.txt"))
+
+(let ([dir (format "~a/programs" out-root-path)])
+  (unless (directory-exists? dir)
+    (make-directory dir))) 

@@ -4,7 +4,7 @@
     <link href="/css/tryrkt.css" rel="stylesheet" type="text/css">
     <link href="/css/gh-fork-ribbon.css" rel="stylesheet" type="text/css">
   </head>
-  <body>
+  <body onload="loadSamples()">
     <div id="wrapper">
       <div class="github-fork-ribbon-wrapper right">
 	<div class="github-fork-ribbon">
@@ -13,19 +13,20 @@
       </div>
       <div id="content">
 	<div id="container">
+	  <select id="samples" onChange="loadSample(this.options[this.selectedIndex].text)">
+	  </select>
 	  <textarea class="console" id="console" cols="100" rows="24" autofocus="autofocus">
 (module f
   (provide [f (integer? . -> . integer?)])
   (define (f n)
-    (/ 1 (- 100 n))))
-</textarea>
+    (/ 1 (- 100 n))))</textarea>
 
 	  <div id="changer">
-	    <p class="bottom">Enter a program on the right to verify.</p>
-	    <div id="changer_result" class="jquery-consol-message">Result goes here.</div>
+	    <button id="btn_submit" autofocus="autofocus" type="button" onclick="check()">Check</button>
+	    <p class="bottom">Enter a program on the left to verify.</p>
+	    <div id="changer_result" class="jquery-console-message"></div>
 	  </div>
 	</div>
-	<button id="btn_submit" autofocus="autofocus" type="button" onclick="check()">Check</button>
 	<div class="footer"><p class="bottom"></p></div>
       </div>
 
