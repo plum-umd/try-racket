@@ -26,7 +26,11 @@
 
 (module+ test (require rackunit))
 
-(define out-root-path "/tmp") ; FIXME
+(define out-programs-path
+  (let ([out-root-path "/tmp" #|FIXME|#])
+    (format "~a/programs" out-root-path)))
+(unless (directory-exists? out-programs-path)
+  (make-directory out-programs-path))
 
 
 ;; Paths
@@ -194,7 +198,7 @@
 (define (eval-with ev request) 
   (define bindings (request-bindings request))
   (cond [(exists-binding? 'expr bindings)
-         (define expr (extract-binding/single 'expr bindings))
+         (define expr (format #|HACK|# "(~a)" (extract-binding/single 'expr bindings)))
          (save-expr expr)
          (make-response
           #:mime-type APPLICATION/JSON-MIME-TYPE
@@ -208,7 +212,7 @@
         [else (make-response #:code 400 #:message #"Bad Request" "")]))
 
 (define (save-expr expr)
-  (define fn (format "~a/programs/~a.sch" out-root-path (current-milliseconds)))
+  (define fn (format "~a/~a.sch" out-programs-path (current-milliseconds)))
   (display-to-file expr fn #:exists 'append))
 
 
@@ -251,13 +255,11 @@
    #:connection-close? #t
    #:quit? #f 
    #:listen-ip #f 
-   #:port 3456
+   #:port 8080
    #:servlet-regexp #rx""
    #:extra-files-paths (list static)
    #:servlet-path "/"
    #:manager mgr
    #:log-file "try-racket-serve-log.txt"))
 
-(let ([dir (format "~a/programs" out-root-path)])
-  (unless (directory-exists? dir)
-    (make-directory dir))) 
+ 
