@@ -67,7 +67,14 @@
 (define-syntax-rule (zero-or-more e)
   (call-with-values (λ () e) (λ xs xs)))
 
-(define (run-code ev str)
+(define-syntax-rule (define/memo (f x ...) e ...)
+  (define f
+    (let ([m (make-weak-hash)])
+      (λ (x ...)
+        (hash-ref! m (list x ...) (λ () e ...))))))
+
+(define/memo (run-code ev str)
+  (save-expr str)
   (define val (ev str)) 
   (define err (get-error-output ev))
   (define out (get-output ev))
@@ -199,7 +206,6 @@
   (define bindings (request-bindings request))
   (cond [(exists-binding? 'expr bindings)
          (define expr (format #|HACK|# "(~a)" (extract-binding/single 'expr bindings)))
-         (save-expr expr)
          (make-response
           #:mime-type APPLICATION/JSON-MIME-TYPE
           (jsexpr->string (result-json expr (run-code ev expr))))]

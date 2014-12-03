@@ -15,6 +15,7 @@ var samples = {
 \n    (cond [(empty? (cdr xs)) (f (car xs))]\
 \n	  [else (min (f (car xs))\
 \n		     (argmin f (cdr xs)))])))",
+
   braun_tree:"(module tree\
 \n  (provide\
 \n   [braun-tree? (any/c . -> . boolean?)]\
@@ -56,6 +57,11 @@ function loadSamples() {
 	var t = document.createTextNode(sampleName)
 	option.appendChild(t);
 	option.setAttributeNode(a);
+	if (sampleName === "div100") {
+	    var b = document.createAttribute("selected");
+	    b.value = "selected";
+	    option.setAttributeNode(b);
+	}
 	selections.appendChild(option);
     }
 }
