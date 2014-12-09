@@ -45,7 +45,30 @@ var samples = {
   div100: "(module f\
 \n  (provide [f (integer? . -> . integer?)])\
 \n  (define (f n)\
-\n    (/ 1 (- 100 n))))"
+\n    (/ 1 (- 100 n))))",
+
+  get_path: "(module lib\
+\n  (provide\
+\n   [path/c any/c]\
+\n   [dom/c any/c])\
+\n  (define path/c\
+\n    (->i ([msg (one-of/c \"hd\" \"tl\")])\
+\n	 (res (msg) (cond [(equal? msg \"hd\") string?]\
+\n			  [else (or/c false? path/c)]))))\
+\n  (define dom/c\
+\n    (->i ([msg (one-of/c \"get-child\")])\
+\n	 (res (msg) (string? . -> . dom/c)))))\
+\n\
+\n(module get-path\
+\n  (provide [get-path (dom/c path/c . -> . dom/c)])\
+\n  (require lib)\
+\n  (define (get-path root p)\
+\n    (while root p))\
+\n  (define (while cur path)\
+\n    (if (and (not (false? path)) (not (false? cur)))\
+\n        (while ((cur \"get-child\") (path \"hd\"))\
+\n          (path #|HERE|# \"hd\" #;\"tl\"))\
+\n        cur)))"
 }
 
 function loadSamples() {
