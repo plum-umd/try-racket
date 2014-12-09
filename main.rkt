@@ -76,7 +76,11 @@
 (define/memo (run-code ev str)
   (save-expr str)
   (define val (ev str)) 
-  (define err (get-error-output ev))
+  (define err
+    ;; HACK: seems to work most of the time
+    (match (get-error-output ev)
+      [(regexp #rx"(.+)(context...:.+)" (list _ s _)) s]
+      [s s]))
   (define out (get-output ev))
   (list (list (if (void? val) "" (format "~a" val))
               (and (not (equal? "" out)) out)
@@ -85,7 +89,11 @@
 (define (complete-code ev str)
   (define res (ev  `(jsexpr->string (namespace-completion ,str)))) 
   (define out (get-output ev))
-  (define err (get-error-output ev))  
+  (define err
+    ;; HACK: seems to work most of the time
+    (match (get-error-output ev)
+      [(regexp #rx"(.+)(context...:.+)" (list _ s _)) s]
+      [s s]))  
   (list (if (void? res) "" res)
         (and (not (equal? out "")) out)
         (and (not (equal? err "")) err)))
@@ -267,5 +275,3 @@
    #:servlet-path "/"
    #:manager mgr
    #:log-file "try-racket-serve-log.txt"))
-
- 
