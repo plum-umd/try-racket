@@ -1,23 +1,23 @@
 var samples = {
-  argmin: "(module holes\
-\n  (provide [proc (-> any/c number?)]\
+  argmin: "(module holes racket\
+\n  (provide/contract [proc (-> any/c number?)]\
 \n	   [lst (nelistof any/c)]))\
 \n\
-\n(module min\
-\n  (provide [min (real? real? . -> . real?)])\
+\n(module min racket\
+\n  (provide/contract [min (real? real? . -> . real?)])\
 \n  (define (min x y)\
 \n    (if (< x y) x y)))\
 \n\
-\n(module argmin\
-\n  (provide [argmin ((-> any/c number?) (nelistof any/c) . -> . any/c)])\
+\n(module argmin racket\
+\n  (provide/contract [argmin ((-> any/c number?) (nelistof any/c) . -> . any/c)])\
 \n  (require min)\
 \n  (define (argmin f xs)\
 \n    (cond [(empty? (cdr xs)) (f (car xs))]\
 \n	  [else (min (f (car xs))\
 \n		     (argmin f (cdr xs)))])))",
 
-  braun_tree:"(module tree\
-\n  (provide\
+  braun_tree:"(module tree racket\
+\n  (provide/contract\
 \n   [braun-tree? (any/c . -> . boolean?)]\
 \n   [insert (braun-tree? any/c . -> . braun-tree?)])\
 \n  \
@@ -42,13 +42,13 @@ var samples = {
 \n        (node (node-v bt) (insert (#|HERE|#node-l bt) x) (node-r bt))\
 \n        (node x #f #f))))",
 
-  div100: "(module f\
-\n  (provide [f (integer? . -> . integer?)])\
+  div100: "(module f racket\
+\n  (provide/contract [f (integer? . -> . integer?)])\
 \n  (define (f n)\
 \n    (/ 1 (- 100 n))))",
 
-  get_path: "(module lib\
-\n  (provide\
+  get_path: "(module lib racket\
+\n  (provide/contract\
 \n   [path/c any/c]\
 \n   [dom/c any/c])\
 \n  (define path/c\
@@ -59,8 +59,8 @@ var samples = {
 \n    (->i ([msg (one-of/c \"get-child\")])\
 \n	 (res (msg) (string? . -> . dom/c)))))\
 \n\
-\n(module get-path\
-\n  (provide [get-path (dom/c path/c . -> . dom/c)])\
+\n(module get-path racket\
+\n  (provide/contract [get-path (dom/c path/c . -> . dom/c)])\
 \n  (require lib)\
 \n  (define (get-path root p)\
 \n    (while root p))\
@@ -188,6 +188,17 @@ function eval_racket(code) {
     $.ajax({
         url: evalUrl,
         data: { expr : code },
+        async: false,
+        success: function(res) { data = res; },
+    });
+    return data;
+}
+
+function run_racket(code) {
+    var data;
+    $.ajax({
+        url: evalUrl,
+        data: { expr : code , concrete : true},
         async: false,
         success: function(res) { data = res; },
     });
@@ -376,3 +387,12 @@ $(document).ready(function() {
     changerUpdated();
 });
 
+
+function run() {
+    setMessage("Running...", "timeout");
+    console.log("About to verify");
+    var results = run_racket(document.getElementById("console").value);
+    console.log("Results:");
+    console.log(results);
+    setResult(results[0]); // better be a singleton
+}
