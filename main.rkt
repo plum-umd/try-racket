@@ -26,9 +26,11 @@
 
 (module+ test (require rackunit))
 
-(define out-programs-path
-  (let ([out-root-path "/tmp" #|FIXME|#])
-    (format "~a/programs" out-root-path)))
+(define out-root
+  (match (current-command-line-arguments)
+    [(vector path) path]
+    [_ (printf "Default root: ~a~n" "/tmp") "/tmp"]))
+(define out-programs-path (format "~a/programs" out-root))
 (unless (directory-exists? out-programs-path)
   (make-directory out-programs-path))
 
