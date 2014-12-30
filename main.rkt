@@ -28,7 +28,7 @@
 
 (define out-root
   (match (current-command-line-arguments)
-    [(vector path) path]
+    [(vector path) (printf "Root is at: ~a~n" path) path]
     [_ (printf "Default root: ~a~n" "/tmp") "/tmp"]))
 (define out-programs-path (format "~a/programs" out-root))
 (unless (directory-exists? out-programs-path)
