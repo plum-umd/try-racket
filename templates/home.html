@@ -54,7 +54,7 @@ value            ::= number | boolean | string | symbol
                    | op | (lambda (id) expr)
 expr             ::= id | (if expr expr expr) | (expr expr …)
 contract         ::= expr | (or/c contract …) | (and/c contract …)
-                   | (->i ([id contract] …) (res (id …) contract))
+                   | (->i ([id contract] …₁) (res (id …₁) contract))
 op               ::= + | - | * | / | string-length
                    | number? | real? | integer? | boolean? | false?
                    | cons? | empty?
