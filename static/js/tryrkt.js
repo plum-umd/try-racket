@@ -1,16 +1,12 @@
 var samples = {
-  argmin: "(module holes racket\
-\n  (provide/contract [proc (-> any/c number?)]\
-\n	   [lst (nelistof any/c)]))\
-\n\
-\n(module min racket\
+  argmin: "(module min racket\
 \n  (provide/contract [min (real? real? . -> . real?)])\
 \n  (define (min x y)\
 \n    (if (< x y) x y)))\
 \n\
 \n(module argmin racket\
-\n  (provide/contract [argmin ((-> any/c number?) (nelistof any/c) . -> . any/c)])\
-\n  (require min)\
+\n  (provide/contract [argmin ((-> any/c number?) (cons/c any/c (listof any/c)) . -> . any/c)])\
+\n  (require (submod \"..\" min))\
 \n  (define (argmin f xs)\
 \n    (cond [(empty? (cdr xs)) (f (car xs))]\
 \n	  [else (min (f (car xs))\
@@ -47,6 +43,25 @@ var samples = {
 \n  (define (f n)\
 \n    (/ 1 (- 100 n))))",
 
+  dynamic_tests: "(module f racket\
+\n  (provide/contract\
+\n   [f ((or/c number? string?) cons? . -> . number?)])\
+\n  (define (f input extra)\
+\n    (cond\
+\n      [(and (number? input) (number? (car extra)))\
+\n       (+ input (car extra))]\
+\n      [(number? (car extra))\
+\n       (+ (string-length input) (car extra))]\
+\n      [else 0])))",
+
+  foldl1: "(module foldl1 racket\
+\n  (provide/contract [foldl1 ((any/c any/c . -> . any/c) (#|HERE|# listof any/c) . -> . any/c)])\
+\n  (define (foldl1 f xs)\
+\n    (let ([z (car xs)]\
+\n          [zs (cdr xs)])\
+\n      (if (empty? zs) z\
+\n          (foldl1 f (cons (f z (car zs)) (cdr zs)))))))",
+
   get_path: "(module lib racket\
 \n  (provide/contract\
 \n   [path/c any/c]\
@@ -61,14 +76,38 @@ var samples = {
 \n\
 \n(module get-path racket\
 \n  (provide/contract [get-path (dom/c path/c . -> . dom/c)])\
-\n  (require lib)\
+\n  (require (submod \"..\" lib))\
 \n  (define (get-path root p)\
 \n    (while root p))\
 \n  (define (while cur path)\
 \n    (if (and (not (false? path)) (not (false? cur)))\
 \n        (while ((cur \"get-child\") (path \"hd\"))\
 \n          (path #|HERE|# \"hd\" #;\"tl\"))\
-\n        cur)))"
+\n        cur)))",
+
+  last: "(module Y racket\
+\n  (provide/contract\
+\n   [Y (([any/c . -> . any/c] . -> . [any/c . -> . any/c]) . -> . [any/c . -> . any/c])])\
+\n  (define (Y f)\
+\n    (λ (y)\
+\n      (((λ (x) (f (λ (z) ((x x) z))))\
+\n        (λ (x) (f (λ (z) ((x x) z)))))\
+\n       y))))\
+\n\
+\n(module last racket\
+\n  (require (submod \"..\" Y))\
+\n  (provide/contract [last (#|HERE|#(listof any/c) . -> . any/c)])\
+\n  (define (last l)\
+\n    ((Y (λ (f)\
+\n          (λ (x)\
+\n            (if (empty? (cdr x)) (car x) (f (cdr x))))))\
+\n     l)))",
+
+  last_pair: "(module lastpair racket\
+\n  (provide/contract\
+\n   [lastpair (cons? . -> . cons?)])\
+\n  (define (lastpair x)\
+\n    (if (cons? #|HERE|# x) (lastpair (cdr x)) x)))"
 }
 
 function loadSamples() {
