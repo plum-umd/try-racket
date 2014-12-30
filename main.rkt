@@ -11,6 +11,8 @@
           racket/match
           racket/local
           racket/runtime-path
+          racket/system
+          racket/string
           web-server/managers/lru
           web-server/managers/manager
           file/convertible
@@ -33,6 +35,12 @@
 (define out-programs-path (format "~a/programs" out-root))
 (unless (directory-exists? out-programs-path)
   (make-directory out-programs-path))
+
+;; Loggings
+(define (system/string s) (string-trim (with-output-to-string (λ () (system s)))))
+(printf "Running from Racket at: ~a~n" (system/string "which racket"))
+(printf "Using Z3 at: ~a~n" (system/string "which z3"))
+(printf "Programs are logged at: ~a~n" out-programs-path)
 
 
 ;; Paths
