@@ -30,8 +30,39 @@
 	</div>
 	<div class="footer"><p class="bottom"></p></div>
       </div>
+    </div>
+
+    <div id="about">
+      <p>
+      This is an online demonstration of our
+      <a href="http://dl.acm.org/citation.cfm?id=2628156">work</a>
+      <a href="http://arxiv.org/abs/1411.3967">in progress</a> on contract verification
+      that generates counterexamples for higher-order functional programs.
+      </p>
+      <p> We currently support a small functional subset of Racket:</p>
+
+      <div id="doc">
+	<pre>
+program          ::= module-form
+sub-module-form  ::= (module module-name racket
+                       (provide provide-spec …)
+                       (require require-spec …)
+                       (define name value) …)
+provide-spec     ::= (name contract)
+require-spec     ::= (submod ".." module-name)
+value            ::= number | boolean | string | symbol
+                   | op | (lambda (id) expr)
+expr             ::= id | (if expr expr expr) | (expr expr …)
+contract         ::= expr | (or/c contract …) | (and/c contract …)
+                   | (->i ([id contract] …) (res (id …) contract))
+op               ::= + | - | * | / | string-length
+                   | number? | real? | integer? | boolean? | false?
+                   | cons? | empty?
+	</pre>
+      </div>
 
     </div>
+
     <script src="/js/jquery-1.4.2.min.js" type="text/javascript"></script>
     <script src="/js/jquery.console.js" type="text/javascript"></script>
     <script src="/js/tryrkt.js" type="text/javascript"></script>
