@@ -258,6 +258,8 @@ function setResult(result) {
     console.log(result);
     if (result.result) {
 	setMessage(result.result, "value");
+    } else if (result.result === "") /*HACK*/ {
+	setMessage("(Program run with no output)", "value");
     } else if (result.error) {
 	setMessage(result.message, "error");
     }

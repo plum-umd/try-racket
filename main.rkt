@@ -73,6 +73,23 @@
                                             '((read #rx#"racket-prefs.rktd")))])
     (make-evaluator 'soft-contract)))
 
+(define (make-ev-rkt)
+  (parameterize ([sandbox-output 'string]
+                 [sandbox-error-output 'string]
+                 [sandbox-propagate-exceptions #f]
+                 [sandbox-memory-limit 200]
+                 [sandbox-eval-limits (list 40 200)]
+                 [sandbox-namespace-specs
+                  (append (sandbox-namespace-specs)
+                          `(file/convertible
+                            json))]
+                 [sandbox-path-permissions (list* ; FIXME hack³
+                                            (list 'write "/var/tmp")
+                                            (list 'write "/tmp")
+                                            (list 'execute "/bin/sh")
+                                            '((read #rx#"racket-prefs.rktd")))])
+    (make-evaluator 'racket)))
+
 ;; Handle arbitrary number of results, gathered into a list
 (define-syntax-rule (zero-or-more e)
   (call-with-values (λ () e) (λ xs xs)))
@@ -222,7 +239,29 @@
 ;; Eval handler
 (define (eval-with ev request) 
   (define bindings (request-bindings request))
-  (cond [(exists-binding? 'expr bindings)
+  (cond [(and (exists-binding? 'expr bindings) (exists-binding? 'concrete bindings))
+         ;; TODO: hack + code dup. This case ignores `ev` and makes a new evaluator.
+         (define expr (extract-binding/single 'expr bindings))
+         (printf "Run: ~a~n" expr)
+         
+         (define ev-rkt (make-ev-rkt))
+         
+         (define val (ev-rkt expr))
+         (define err
+           ;; HACK: seems to work most of the time
+           (match (get-error-output ev-rkt)
+             [(regexp #rx"(.+)(context...:.+)" (list _ s _)) s]
+             [s s]))
+         (define out (get-output ev-rkt))
+         (define res
+           (list (list (if (void? val) "" (format "~a" val))
+                       (and (not (equal? "" out)) out)
+                       (and (not (equal? "" err)) err))))
+         (printf "Res: ~a~n" (jsexpr->string (result-json expr res)))
+         (make-response
+          #:mime-type APPLICATION/JSON-MIME-TYPE
+          (jsexpr->string (result-json expr res)))]
+        [(exists-binding? 'expr bindings)
          (define expr (format #|HACK|# "(~a)" (extract-binding/single 'expr bindings)))
          (make-response
           #:mime-type APPLICATION/JSON-MIME-TYPE
