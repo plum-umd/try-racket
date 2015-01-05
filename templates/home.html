@@ -36,17 +36,17 @@
       using symbolic execution.
       </p>
       <p>This tool verifies a module's correctness up to contracts,
-	which include explicit declarations as well as implicit ones
+	which includes explicit declarations as well as implicit ones
 	for primitive operations.
 	Verified modules are guaranteed to be safe under all contexts.
 	In addition, for each error that the module can actually cause,
-	the tool generates a concrete input that really triggers it.
+	the tool generates a concrete input that triggers it.
       </p>
       <p> We currently support a small functional subset of Racket:</p>
 
       <div id="doc">
 	<pre>
-program          ::= module-form
+program          ::= sub-module-form
 sub-module-form  ::= (module module-name racket
                        (provide provide-spec …)
                        (require require-spec …)
