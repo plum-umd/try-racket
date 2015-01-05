@@ -56,9 +56,9 @@ sub-module-form  ::= (module module-name racket
                        (define name value) …)
 provide-spec     ::= (name contract)
 require-spec     ::= (submod ".." module-name)
+expr             ::= value | id | (if expr expr expr) | (expr expr …)
 value            ::= number | boolean | string | symbol
-                   | op | (lambda (id) expr)
-expr             ::= id | (if expr expr expr) | (expr expr …)
+                   | op | (lambda (id …) expr)
 contract         ::= expr | (or/c contract …) | (and/c contract …)
                    | (->i ([id contract] …₁) (res (id …₁) contract))
 op               ::= + | - | * | / | string-length
