@@ -23,6 +23,7 @@
           racket/port
           racket/list
           racket/file)
+(provide eval-with make-ev)
 
 (define APPLICATION/JSON-MIME-TYPE #"application/json;charset=utf-8")
 
@@ -66,7 +67,8 @@
                   (append (sandbox-namespace-specs)
                           `(file/convertible
                             json))]
-                 [sandbox-path-permissions (list* ; FIXME hack³
+                 [sandbox-path-permissions (list* ; FIXME hack⁴
+                                            (list 'exists "/")
                                             (list 'write "/var/tmp")
                                             (list 'write "/tmp")
                                             (list 'execute "/bin/sh")
