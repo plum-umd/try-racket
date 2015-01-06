@@ -49,21 +49,21 @@
 
       <div id="doc">
 	<pre>
-program          ::= sub-module-form
-sub-module-form  ::= (module module-name racket
-                       (provide provide-spec …)
-                       (require require-spec …)
-                       (define name value) …)
-provide-spec     ::= (name contract)
-require-spec     ::= (submod ".." module-name)
-expr             ::= value | id | (if expr expr expr) | (expr expr …)
+program          ::= (sub-module-form …)
+sub-module-form  ::= (<b>module</b> module-name <b>racket</b>
+                       (<b>provide/contract</b> provide-spec …)
+                       (<b>require</b> require-spec …)
+                       (<b>define</b> id value) …)
+provide-spec     ::= (id contract)
+require-spec     ::= (<b>submod</b> <b>".."</b> module-name)
+expr             ::= value | id | (<b>if</b> expr expr expr) | (expr expr …)
 value            ::= number | boolean | string | symbol
-                   | op | (lambda (id …) expr)
-contract         ::= expr | (or/c contract …) | (and/c contract …)
-                   | (->i ([id contract] …₁) (res (id …₁) contract))
-op               ::= + | - | * | / | string-length
-                   | number? | real? | integer? | boolean? | false?
-                   | cons? | empty?
+                   | op | (<b>lambda</b> (id …) expr)
+contract         ::= expr | (<b>or/c</b> contract …) | (<b>and/c</b> contract …)
+                   | (<b>->i</b> ([id contract] …₁) (res (id …₁) contract))
+op               ::= <b>+</b> | <b>-</b> | <b>*</b> | <b>/</b> | <b>string-length</b>
+                   | <b>number?</b> | <b>real?</b> | <b>integer?</b> | <b>boolean?</b> | <b>false?</b>
+                   | <b>cons?</b> | <b>empty?</b>
 	</pre>
       </div>
 
