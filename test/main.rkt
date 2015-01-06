@@ -25,7 +25,7 @@
          racket/file
          racket/promise
          rackunit
-         "../main.rkt")
+         "../server.rkt")
 
 (define dummy-url (url #f #f #f #f #f null null #f))
 
@@ -68,10 +68,13 @@
     (check-regexp-match ".*An example module that breaks it.*" msg)))
 
 (for ([file (in-directory "safe")])
-  (check-verify-safe (file->bytes file)))
+  (test-case (path->string file)
+             (check-verify-safe (file->bytes file))))
 
 (for ([file (in-directory "fail")])
-  (check-verify-fail (file->bytes file)))
+  (test-case (path->string file)
+             (check-verify-fail (file->bytes file))))
 
 (for ([file (in-directory "fail-ce")])
-  (check-verify-fail (file->bytes file) #t))
+  (test-case (path->string file)
+             (check-verify-fail (file->bytes file) #t)))
