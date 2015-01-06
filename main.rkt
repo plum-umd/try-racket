@@ -242,7 +242,7 @@
   (cond [(and (exists-binding? 'expr bindings) (exists-binding? 'concrete bindings))
          ;; TODO: hack + code dup. This case ignores `ev` and makes a new evaluator.
          (define expr (extract-binding/single 'expr bindings))
-         (printf "Run: ~a~n" expr)
+         #;(printf "Run: ~a~n" expr)
          
          (define ev-rkt (make-ev-rkt))
          
@@ -257,7 +257,7 @@
            (list (list (if (void? val) "" (format "~a" val))
                        (and (not (equal? "" out)) out)
                        (and (not (equal? "" err)) err))))
-         (printf "Res: ~a~n" (jsexpr->string (result-json expr res)))
+         #;(printf "Res: ~a~n" (jsexpr->string (result-json expr res)))
          (make-response
           #:mime-type APPLICATION/JSON-MIME-TYPE
           (jsexpr->string (result-json expr res)))]
