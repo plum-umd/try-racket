@@ -53,13 +53,16 @@ program          ::= (sub-module-form …)
 sub-module-form  ::= (<b>module</b> module-name <b>racket</b>
                        (<b>provide/contract</b> provide-spec …)
                        (<b>require</b> require-spec …)
+                       (<b>struct</b> id (id …)) …
                        (<b>define</b> id value) …)
-provide-spec     ::= (id contract)
+provide-spec     ::= (id contract) | (<b>struct</b> id ([id contract] …))
 require-spec     ::= (<b>submod</b> <b>".."</b> module-name)
 expr             ::= value | id | (<b>if</b> expr expr expr) | (expr expr …)
 value            ::= number | boolean | string | symbol
                    | op | (<b>lambda</b> (id …) expr)
-contract         ::= expr | (<b>or/c</b> contract …) | (<b>and/c</b> contract …)
+contract         ::= expr | <b>any/c</b> | (<b>or/c</b> contract …) | (<b>and/c</b> contract …)
+                   | (<b>list/c</b> contract) | (<b>listof</b> contract)
+                   | (<b>struct/c</b> id contract …)
                    | (<b>->i</b> ([id contract] …₁) (res (id …₁) contract))
 op               ::= <b>+</b> | <b>-</b> | <b>*</b> | <b>/</b> | <b>string-length</b>
                    | <b>number?</b> | <b>real?</b> | <b>integer?</b> | <b>boolean?</b> | <b>false?</b>
