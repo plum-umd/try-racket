@@ -1,32 +1,27 @@
-try-racket
-==========
+try-scv-racket
+==============
 
-A web-based Racket REPL and tutorial.
+Soft Contract Verification (SCF) Racket	is an experimental variant of
+the Racket programming language	that enables static verification of
+contracts.  The	`try-scv-racket` repository implements a web-based REPL
+and tutorial for SCV Racket.
 
-Try Racket is written in Racket and JavaScript with Chris Done's [jquery-console](https://github.com/chrisdone/jquery-console).
-   
-   It borrows a lot of code and content from [Try Clojure](http://www.tryclj.com/) and [paste.rkt](https://github.com/samth/paste.rkt).
+To try the web REPL, visit http://scv.umiacs.umd.edu
 
-Slight additional modifications have since been made to remove dependencies on X11 by John Berry, with help from many others in the Racket community. Please note that the REPL and its server are still to some extent a work in progress, and community contribution is vigorously encouraged. Pull requests will likely be met with cheer, though we ask that you try to give it a little bit of testing before submitting (and we will do same as well before pushing to the live server).
+To locally run SCV Racket, visit the [`soft-contract` repository](https://github.com/philnguyen/soft-contract).
 
-## How to run it locally
+The SCV Racket web REPL is based on [`try-racket`](https://github.com/jarcane/try-racket), a web
+REPL for (plain) Racket.
 
-1. Clone the `both` branch in `soft-contract`. Inside the directory, run:
+## Bug Reports
 
-    raco pkg install
-2. Run locally
-    
-    $ racket main.rkt
-    
-	Open http://localhost:8080 in your browser
+Please issue bug reports on github.
 
-## Temporary hack to run SCPCF locally:
+## Authors
 
-* You need to modify your own version of Racket in the file
-  `/Racket/share/pkgs/gui-lib/mred/private/wx/gtk/platform.rkt`,
-  where the `provide` line is changed from
-  `(provide (protect-out platform-values))`
-  to just `(provide platform-values)`
+* Phuc C. Nguyen
+* Sam Tobin-Hochstadt
+* David Van Horn
 
 ### TODO
 
@@ -40,13 +35,9 @@ Slight additional modifications have since been made to remove dependencies on X
 * Aliases for characters like `•` and `λ`
 
 
-## Online host
-
-Try Racket is hosted online at http://try-racket.org and http://try.racket-lang.org
-
-Please feel free to report any issues with the website here; the current maintainer (John Berry) is also the webmaster for the try-racket.org site.
-
 ## License
+
+The Try SCV Racket web REPL is based on Try Racket, which is:
 
 Copyright (c) 2013-2014 Emmanuel Delaborde <th3rac25@gmail.com>
 
