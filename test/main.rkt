@@ -67,14 +67,13 @@
   (when counter-example?
     (check-regexp-match ".*An example module that breaks it.*" msg)))
 
-(for ([file (in-directory "safe")])
-  (test-case (path->string file)
-             (check-verify-safe (file->bytes file))))
+(define (test-dir dir-name test-func)
+  (for ([file (in-directory dir-name)]
+        #:when (regexp-match? #rx".*rkt" (path->string file)))
+    (printf "Testing: ~a~n" file)
+    (test-case (path->string file)
+               (test-func (file->bytes file)))))
 
-(for ([file (in-directory "fail")])
-  (test-case (path->string file)
-             (check-verify-fail (file->bytes file))))
-
-(for ([file (in-directory "fail-ce")])
-  (test-case (path->string file)
-             (check-verify-fail (file->bytes file) #t)))
+(test-dir "safe" check-verify-safe)
+(test-dir "fail" check-verify-fail)
+(test-dir "fail-ce" (λ (s) (check-verify-fail s #t)))
