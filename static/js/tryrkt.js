@@ -1,4 +1,4 @@
-var samples = {
+var examples = {
   argmin: "(module min racket\
 \n  (provide/contract [min (real? real? . -> . real?)])\
 \n  (define (min x y)\
@@ -110,31 +110,27 @@ var samples = {
 \n    (if (cons? #|HERE|# x) (lastpair (cdr x)) x)))"
 }
 
-function loadSamples() {
-    var selections = document.getElementById("samples");
-    for (var sampleName in samples) {
+function loadExamples() {
+    var selections = document.getElementById("examples");
+    for (var exampleName in examples) {
 	var option = document.createElement("option");
 	var a = document.createAttribute("value");
-	a.value = sampleName;
-	var t = document.createTextNode(sampleName)
+	a.value = exampleName;
+	var t = document.createTextNode(exampleName)
 	option.appendChild(t);
 	option.setAttributeNode(a);
-	if (sampleName === "div100") {
+	if (exampleName === "div100") {
 	    var b = document.createAttribute("selected");
 	    b.value = "selected";
 	    option.setAttributeNode(b);
 	}
 	selections.appendChild(option);
     }
+    loadExample("div100");
 }
 
-function loadSample(sampleName) {
-    var text = document.createTextNode(samples[sampleName]);
-    var edit = document.getElementById("console");
-    while (edit.firstChild) {
-	edit.removeChild(edit.firstChild);
-    }
-    edit.appendChild(text);
+function loadExample(exampleName) {
+    document.getElementById("console").value = examples[exampleName];
 }
 
 /*var currentPage = -1;

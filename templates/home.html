@@ -4,17 +4,13 @@
     <link href="/css/tryrkt.css" rel="stylesheet" type="text/css">
     <link href="/css/gh-fork-ribbon.css" rel="stylesheet" type="text/css">
   </head>
-  <body onload="loadSamples()">
+  <body onload="loadExamples()">
     <div id="wrapper">
       <div id="content">
-	<select id="samples" onChange="loadSample(this.options[this.selectedIndex].text)">
+	<select id="examples" onChange="loadExample(this.options[this.selectedIndex].text)">
 	  </select>
 	<div id="container">
-	  <textarea class="console" id="console" cols="100" rows="24" autofocus="autofocus">
-(module f racket
-  (provide/contract [f (integer? . -> . integer?)])
-  (define (f n)
-    (/ 1 (- 100 n))))</textarea>
+	  <textarea class="console" id="console" cols="100" rows="24" autofocus="autofocus"></textarea>
 
 	  <div id="changer">
 	    <button id="btn_submit" autofocus="autofocus" type="button" onclick="check()">Verify</button>
