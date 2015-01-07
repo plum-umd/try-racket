@@ -35,7 +35,7 @@ var examples = {
 \n  \
 \n  (define (insert bt x)\
 \n    (if (node? bt)\
-\n        (node (node-v bt) (insert (#|HERE|#node-l bt) x) (node-r bt))\
+\n        (node (node-v bt) (insert (node-l bt) x) (node-r bt))\
 \n        (node x #f #f))))",
 
   div100: "(module f racket\
@@ -55,7 +55,7 @@ var examples = {
 \n      [else 0])))",
 
   foldl1: "(module foldl1 racket\
-\n  (provide/contract [foldl1 ((any/c any/c . -> . any/c) (#|HERE|# listof any/c) . -> . any/c)])\
+\n  (provide/contract [foldl1 ((any/c any/c . -> . any/c) (listof any/c) . -> . any/c)])\
 \n  (define (foldl1 f xs)\
 \n    (let ([z (car xs)]\
 \n          [zs (cdr xs)])\
@@ -82,7 +82,7 @@ var examples = {
 \n  (define (while cur path)\
 \n    (if (and (not (false? path)) (not (false? cur)))\
 \n        (while ((cur \"get-child\") (path \"hd\"))\
-\n          (path #|HERE|# \"hd\" #;\"tl\"))\
+\n          (path \"hd\" #;\"tl\"))\
 \n        cur)))",
 
   last: "(module Y racket\
@@ -96,7 +96,7 @@ var examples = {
 \n\
 \n(module last racket\
 \n  (require (submod \"..\" Y))\
-\n  (provide/contract [last (#|HERE|#(listof any/c) . -> . any/c)])\
+\n  (provide/contract [last ((listof any/c) . -> . any/c)])\
 \n  (define (last l)\
 \n    ((Y (λ (f)\
 \n          (λ (x)\
@@ -107,7 +107,7 @@ var examples = {
 \n  (provide/contract\
 \n   [lastpair (cons? . -> . cons?)])\
 \n  (define (lastpair x)\
-\n    (if (cons? #|HERE|# x) (lastpair (cdr x)) x)))"
+\n    (if (cons? x) (lastpair (cdr x)) x)))"
 }
 
 function loadExamples() {
