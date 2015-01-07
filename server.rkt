@@ -10,6 +10,7 @@
          racket/sandbox
          racket/string
          racket/system
+         racket/pretty
          web-server/dispatch
          web-server/http
          web-server/managers/lru
@@ -240,8 +241,8 @@
   (define bindings (request-bindings request))
   (cond [(and (exists-binding? 'expr bindings) (exists-binding? 'concrete bindings))
          ;; TODO: hack + code dup. This case ignores `ev` and makes a new evaluator.
-         (define expr (extract-binding/single 'expr bindings))
-         #;(printf "Run: ~a~n" expr)
+         (define expr (hack-require-clause (extract-binding/single 'expr bindings)))
+         (printf "Run: ~a~n" expr)
          
          (define ev-rkt (make-ev-rkt))
          
@@ -256,7 +257,7 @@
            (list (list (if (void? val) "" (format "~a" val))
                        (and (not (equal? "" out)) out)
                        (and (not (equal? "" err)) err))))
-         #;(printf "Res: ~a~n" (jsexpr->string (result-json expr res)))
+         (printf "Res: ~a~n" (jsexpr->string (result-json expr res)))
          (make-response
           #:mime-type APPLICATION/JSON-MIME-TYPE
           (jsexpr->string (result-json expr res)))]
@@ -300,3 +301,17 @@
 
 (define mgr
   (make-threshold-LRU-manager expiration-handler (* 256 1024 1024)))
+
+;; Replace each `(submod ".." name)` with `'name`
+(define (hack-require-clause str)
+  (define replace
+    (match-lambda
+     [`(submod ".." ,name) `(quote ,name)]
+     [(list xs ...) (map replace xs)]
+     [(? string? s) (format "\"~a\"" s)]
+     [x x]))
+  (define converted (replace (with-input-from-string (format "(~a)" str) read)))
+  (string-join
+   (for/list ([sexp converted])
+     (format "~a" sexp))
+   "\n"))
