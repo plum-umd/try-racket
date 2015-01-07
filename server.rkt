@@ -96,7 +96,6 @@
         (hash-ref! m (list x ...) (λ () e ...))))))
 
 (define/memo (run-code ev str)
-  (save-expr str)
   (define val (ev str)) 
   (define err
     ;; HACK: seems to work most of the time
@@ -104,6 +103,11 @@
       [(regexp #rx"(.+)(context...:.+)" (list _ s _)) s]
       [s s]))
   (define out (get-output ev))
+  
+  ;; Log
+  (save-expr 
+   (format "~a~n~n#|Result:~n~a~n~a~n~a~n|#~n" str val err out))
+  
   (list (list (if (void? val) "" (format "~a" val))
               (and (not (equal? "" out)) out)
               (and (not (equal? "" err)) err))))
