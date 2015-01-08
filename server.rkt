@@ -61,10 +61,8 @@
                   (append (sandbox-namespace-specs)
                           `(file/convertible
                             json))]
-                 [sandbox-path-permissions (list* ; FIXME hack⁴
+                 [sandbox-path-permissions (list* ; FIXME hack²
                                             (list 'exists "/")
-                                            (list 'write "/var/tmp")
-                                            (list 'write "/tmp")
                                             (list 'execute "/bin/sh")
                                             '((read #rx#"racket-prefs.rktd")))])
     (make-evaluator 'soft-contract)))
@@ -79,9 +77,7 @@
                   (append (sandbox-namespace-specs)
                           `(file/convertible
                             json))]
-                 [sandbox-path-permissions (list* ; FIXME hack³
-                                            (list 'write "/var/tmp")
-                                            (list 'write "/tmp")
+                 [sandbox-path-permissions (list* ; FIXME hack
                                             (list 'execute "/bin/sh")
                                             '((read #rx#"racket-prefs.rktd")))])
     (make-evaluator 'racket)))
@@ -223,7 +219,7 @@
   (cond [(and (exists-binding? 'expr bindings) (exists-binding? 'concrete bindings))
          ;; TODO: hack + code dup. This case ignores `ev` and makes a new evaluator.
          (define expr (hack-require-clause (extract-binding/single 'expr bindings)))
-         (printf "Run: ~a~n" expr)
+         #;(printf "Run: ~a~n" expr)
          
          (define ev-rkt (make-ev-rkt))
          
@@ -238,7 +234,7 @@
            (list (list (if (void? val) "" (format "~a" val))
                        (and (not (equal? "" out)) out)
                        (and (not (equal? "" err)) err))))
-         (printf "Res: ~a~n" (jsexpr->string (result-json expr res)))
+         #;(printf "Res: ~a~n" (jsexpr->string (result-json expr res)))
          (make-response
           #:mime-type APPLICATION/JSON-MIME-TYPE
           (jsexpr->string (result-json expr res)))]

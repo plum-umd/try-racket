@@ -23,15 +23,6 @@ Please issue bug reports on github.
 * Sam Tobin-Hochstadt
 * David Van Horn
 
-### TODO
-
-* Fix current hacks to get SCPCF working:
-
-  - Path permissions in `/var/tmp`, `/tmp`, and `/bin/sh` to have `Z3` running.
-	While the language SCPCF is pure and I don't see much risk,
-	I'm sure there is a proper way to do this.
-
-
 ## License
 
 The Try SCV Racket web REPL is based on Try Racket, which is:
