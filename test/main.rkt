@@ -63,7 +63,7 @@
   (check-true (hash-has-key? res 'error))
   (check-true (hash-has-key? res 'message))
   (define msg (hash-ref res 'message))
-  (check-regexp-match ".*Contract violation.*" msg)
+  (check-regexp-match ".*ontract violation.*" msg)
   (when counter-example?
     (check-regexp-match ".*An example module that breaks it.*" msg)))
 
