@@ -67,6 +67,16 @@
   (when counter-example?
     (check-regexp-match ".*An example module that breaks it.*" msg)))
 
+;; Bytes -> Void
+;; Makes sure the program is not allowed to run with full Racket
+(define (check-run-denied s)
+  (define ev (make-ev-rkt))
+  (define res (ev s))
+  (define out (get-output ev))
+  (define err (get-error-output ev))
+  (check-equal? "" out)
+  (check-regexp-match ".*access denied.*" err))
+
 (define (test-dir dir-name test-func)
   (for ([file (in-directory dir-name)]
         #:when (regexp-match? #rx".*rkt" (path->string file)))
@@ -77,3 +87,4 @@
 (test-dir "safe" check-verify-safe)
 (test-dir "fail" check-verify-fail)
 (test-dir "fail-ce" (λ (s) (check-verify-fail s #t)))
+(test-dir "run-denied" check-run-denied)

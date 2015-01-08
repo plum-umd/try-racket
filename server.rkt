@@ -51,6 +51,8 @@
   (let ([x 0])
     (λ ()
       (begin0 x (set! x (add1 x))))))
+
+;; Make sandboxed soft-contract evaluator
 (define (make-ev)
   (parameterize ([sandbox-output 'string]
                  [sandbox-error-output 'string]
@@ -63,10 +65,13 @@
                             json))]
                  [sandbox-path-permissions (list* ; FIXME hack²
                                             (list 'exists "/")
+                                            ;; execute below is fine for now because SCV doesn't have side effects
+                                            ;; we need this to run Z3
                                             (list 'execute "/bin/sh")
                                             '((read #rx#"racket-prefs.rktd")))])
     (make-evaluator 'soft-contract)))
 
+;; Make sandboxed Racket evaluator
 (define (make-ev-rkt)
   (parameterize ([sandbox-output 'string]
                  [sandbox-error-output 'string]
@@ -77,9 +82,7 @@
                   (append (sandbox-namespace-specs)
                           `(file/convertible
                             json))]
-                 [sandbox-path-permissions (list* ; FIXME hack
-                                            (list 'execute "/bin/sh")
-                                            '((read #rx#"racket-prefs.rktd")))])
+                 [sandbox-path-permissions '((read #rx#"racket-prefs.rktd"))])
     (make-evaluator 'racket)))
 
 ;; Handle arbitrary number of results, gathered into a list
