@@ -1,11 +1,11 @@
 var examples = {
   argmin: "(module min racket\
-\n  (provide/contract [min (real? real? . -> . real?)])\
+\n  (provide (contract-out [min (real? real? . -> . real?)]))\
 \n  (define (min x y)\
 \n    (if (< x y) x y)))\
 \n\
 \n(module argmin racket\
-\n  (provide/contract [argmin ((-> any/c number?) (cons/c any/c (listof any/c)) . -> . any/c)])\
+\n  (provide (contract-out [argmin ((-> any/c number?) (cons/c any/c (listof any/c)) . -> . any/c)]))\
 \n  (require (submod \"..\" min))\
 \n  (define (argmin f xs)\
 \n    (cond [(empty? (cdr xs)) (f (car xs))]\
@@ -13,9 +13,10 @@ var examples = {
 \n		     (argmin f (cdr xs)))])))",
 
   braun_tree:"(module tree racket\
-\n  (provide/contract\
-\n   [braun-tree? (any/c . -> . boolean?)]\
-\n   [insert (braun-tree? any/c . -> . braun-tree?)])\
+\n  (provide\
+\n   (contract-out\
+\n    [braun-tree? (any/c . -> . boolean?)]\
+\n    [insert (braun-tree? any/c . -> . braun-tree?)]))\
 \n  \
 \n  (struct node (v l r))\
 \n\
@@ -39,13 +40,14 @@ var examples = {
 \n        (node x #f #f))))",
 
   div100: "(module f racket\
-\n  (provide/contract [f (integer? . -> . integer?)])\
+\n  (provide (contract-out [f (integer? . -> . integer?)]))\
 \n  (define (f n)\
 \n    (/ 1 (- 100 n))))",
 
   dynamic_tests: "(module f racket\
-\n  (provide/contract\
-\n   [f ((or/c number? string?) cons? . -> . number?)])\
+\n  (provide\
+\n   (contract-out\
+\n    [f ((or/c number? string?) cons? . -> . number?)]))\
 \n  (define (f input extra)\
 \n    (cond\
 \n      [(and (number? input) (number? (car extra)))\
@@ -55,7 +57,7 @@ var examples = {
 \n      [else 0])))",
 
   foldl1: "(module foldl1 racket\
-\n  (provide/contract [foldl1 ((any/c any/c . -> . any/c) (listof any/c) . -> . any/c)])\
+\n  (provide (contract-out [foldl1 ((any/c any/c . -> . any/c) (listof any/c) . -> . any/c)]))\
 \n  (define (foldl1 f xs)\
 \n    (let ([z (car xs)]\
 \n          [zs (cdr xs)])\
@@ -63,9 +65,10 @@ var examples = {
 \n          (foldl1 f (cons (f z (car zs)) (cdr zs)))))))",
 
   get_path: "(module lib racket\
-\n  (provide/contract\
-\n   [path/c any/c]\
-\n   [dom/c any/c])\
+\n  (provide\
+\n   (contract-out\
+\n    [path/c any/c]\
+\n    [dom/c any/c]))\
 \n  (define path/c\
 \n    (->i ([msg (one-of/c \"hd\" \"tl\")])\
 \n	 (res (msg) (cond [(equal? msg \"hd\") string?]\
@@ -75,7 +78,7 @@ var examples = {
 \n	 (res (msg) (string? . -> . dom/c)))))\
 \n\
 \n(module get-path racket\
-\n  (provide/contract [get-path (dom/c path/c . -> . dom/c)])\
+\n  (provide (contract-out [get-path (dom/c path/c . -> . dom/c)]))\
 \n  (require (submod \"..\" lib))\
 \n  (define (get-path root p)\
 \n    (while root p))\
@@ -86,8 +89,9 @@ var examples = {
 \n        cur)))",
 
   last: "(module Y racket\
-\n  (provide/contract\
-\n   [Y (([any/c . -> . any/c] . -> . [any/c . -> . any/c]) . -> . [any/c . -> . any/c])])\
+\n  (provide\
+\n   (contract-out\
+\n    [Y (([any/c . -> . any/c] . -> . [any/c . -> . any/c]) . -> . [any/c . -> . any/c])]))\
 \n  (define (Y f)\
 \n    (λ (y)\
 \n      (((λ (x) (f (λ (z) ((x x) z))))\
@@ -96,7 +100,7 @@ var examples = {
 \n\
 \n(module last racket\
 \n  (require (submod \"..\" Y))\
-\n  (provide/contract [last ((listof any/c) . -> . any/c)])\
+\n  (provide (contract-out [last ((listof any/c) . -> . any/c)]))\
 \n  (define (last l)\
 \n    ((Y (λ (f)\
 \n          (λ (x)\
@@ -104,8 +108,8 @@ var examples = {
 \n     l)))",
 
   last_pair: "(module lastpair racket\
-\n  (provide/contract\
-\n   [lastpair (cons? . -> . cons?)])\
+\n  (provide\
+\n   (contract-out [lastpair (cons? . -> . cons?)]))\
 \n  (define (lastpair x)\
 \n    (if (cons? x) (lastpair (cdr x)) x)))"
 }
