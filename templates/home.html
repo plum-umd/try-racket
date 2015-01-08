@@ -47,11 +47,12 @@
 	<pre>
 program          ::= (sub-module-form …)
 sub-module-form  ::= (<b>module</b> module-name <b>racket</b>
-                       (<b>provide</b> (<b>contract-out</b> provide-spec …))
+                       (<b>provide</b> provide-spec …)
                        (<b>require</b> require-spec …)
                        (<b>struct</b> id (id …)) …
                        (<b>define</b> id value) …)
-provide-spec     ::= (id contract) | (<b>struct</b> id ([id contract] …))
+provide-spec     ::= id | (contract-out p/c-item …)
+p/c-item         ::= (id contract) | (<b>struct</b> id ([id contract] …))
 require-spec     ::= (<b>submod</b> <b>".."</b> module-name)
 expr             ::= value | id | (<b>if</b> expr expr expr) | (expr expr …)
 value            ::= number | boolean | string | symbol

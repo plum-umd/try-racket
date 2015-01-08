@@ -79,7 +79,7 @@
 
 (define (test-dir dir-name test-func)
   (for ([file (in-directory dir-name)]
-        #:when (regexp-match? #rx".*rkt" (path->string file)))
+        #:when (regexp-match-exact? #rx".*rkt" (path->string file)))
     (printf "Testing: ~a~n" file)
     (test-case (path->string file)
                (test-func (file->bytes file)))))
