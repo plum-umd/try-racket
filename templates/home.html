@@ -45,7 +45,8 @@
 
       <div id="doc">
 	<pre>
-program          ::= sub-module-form … | sub-module-form … (require 'id …) expr …
+program          ::= sub-module-form …
+                   | sub-module-form … (require 'id …) expr …
 sub-module-form  ::= (<b>module</b> module-name <b>racket</b>
                        (<b>provide</b> provide-spec …)
                        (<b>require</b> require-spec …)
