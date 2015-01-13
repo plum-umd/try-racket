@@ -20,9 +20,9 @@
     </div>
     <div id="wrapper">
       <div id="container">
-           <form>
-              <select id="examples" onChange="loadExample(this.options[this.selectedIndex].text)"></select>
-              <textarea id="code" cols="120" rows="30" name="code"></textarea>
+          Examples: <select id="examples" onChange="loadExample(this.options[this.selectedIndex].text)"></select>           
+          <form>
+            <textarea id="code" cols="120" rows="30" name="code"></textarea>
           </form>
       </div>
       <div id="changer">
@@ -30,8 +30,8 @@
           <button id="btn_run" type="button" onclick="copy();run()">Run</button>
           <p class="bottom">Enter a program on the left to verify.</p>
           <div id="changer_result" class="jquery-console-message"></div>
+          <!-- <button id="btn_copy" type="button" onclick="counterexample();copy()">Copy to Editor</button> -->
       </div>
-    <div class="footer"><p class="bottom"></p></div>
     <div id="about">
       <p>
         This is a demonstration of our
@@ -79,8 +79,18 @@
       </div>
     </div>
     <script type="text/javascript">
-      var myCodeMirror = CodeMirror.fromTextArea(code, {lineNumbers: true, matchBrackets: true});
+      var myCodeMirror = CodeMirror.fromTextArea(code, {
+        lineNumbers: true, 
+        matchBrackets: true,
+
+
+      });
     </script>
     <textarea id="console" cols="120" rows="30" name="console" style="display:none;"></textarea>
+    <div id="footer"><p>
+      <a href="http://racket-lang.org/">RACKET</a>&nbsp&nbsp&nbsp&nbsp&nbsp
+      <a href="https://www.cs.umd.edu/~dvanhorn/">DVH</a>&nbsp&nbsp&nbsp&nbsp&nbsp
+      <a href="https://github.com/plum-umd/try-scv-racket">CODE</a>
+    </p></div>
   </body>
 </html>
