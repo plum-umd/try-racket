@@ -135,6 +135,11 @@ function loadExamples() {
 
 function loadExample(exampleName) {
     document.getElementById("console").value = examples[exampleName];
+    myCodeMirror.setValue(document.getElementById("console").value)
+}
+
+function copy() {
+    document.getElementById("console").value = myCodeMirror.getValue();
 }
 
 /*var currentPage = -1;
