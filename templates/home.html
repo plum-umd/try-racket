@@ -15,24 +15,23 @@
     <title>Try SCV</title>
   </head>
   <body onload="loadExamples()">
-    <div id="wrapper">
-      <div id="content">
-        <select id="examples" onChange="loadExample(this.options[this.selectedIndex].text)"></select>
-        <div id="container">
-             <form>
-              <div style="border-top: 1px solid black; border-bottom: 1px solid black;">
-                <textarea id="code" cols="120" rows="30" name="code"></textarea>
-              </div>
-            </form>
-          <div id="changer">
-            <button id="btn_submit" autofocus="autofocus" type="button" onclick="copy();check()">Verify</button>
-            <button id="btn_run" type="button" onclick="copy();run()">Run</button>
-            <p class="bottom">Enter a program on the left to verify.</p>
-            <div id="changer_result" class="jquery-console-message"></div>
-          </div>
-        </div>
-      <div class="footer"><p class="bottom"></p></div>
+    <div id="header">
+      <h1>SCV Racket</h1>
     </div>
+    <div id="wrapper">
+      <div id="container">
+           <form>
+              <select id="examples" onChange="loadExample(this.options[this.selectedIndex].text)"></select>
+              <textarea id="code" cols="120" rows="30" name="code"></textarea>
+          </form>
+      </div>
+      <div id="changer">
+          <button id="btn_submit" autofocus="autofocus" type="button" onclick="copy();check()">Verify</button>
+          <button id="btn_run" type="button" onclick="copy();run()">Run</button>
+          <p class="bottom">Enter a program on the left to verify.</p>
+          <div id="changer_result" class="jquery-console-message"></div>
+      </div>
+    <div class="footer"><p class="bottom"></p></div>
     <div id="about">
       <p>
         This is a demonstration of our
