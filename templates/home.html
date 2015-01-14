@@ -16,7 +16,14 @@
   </head>
   <body onload="loadExamples()">
     <div id="header">
-      <h1>SCV Racket</h1>
+      <div id="logo">
+        SCV Racket
+      </div>
+      <div id="links">
+        <h1>
+        <a href="/">Try</a>&nbsp&nbsp&nbsp&nbsp&nbsp
+        <a href="/about.html">About</a></h1>
+      </div>
     </div>
     <div id="wrapper">
       <div id="container">
@@ -32,7 +39,7 @@
           <div id="changer_result" class="jquery-console-message"></div>
           <!-- <button id="btn_copy" type="button" onclick="counterexample();copy()">Copy to Editor</button> -->
       </div>
-    <div id="about">
+    <div id="instructions">
       <p> 
         To try the tool, enter a program to the left and press <code>Verify</code>
         to run the verification, or <code>Run</code> to run it as a regular Racket program.
@@ -62,7 +69,6 @@
                              | <b>cons?</b> | <b>empty?</b>
         </pre>
       </div>
-    </div>
     <script type="text/javascript">
       var myCodeMirror = CodeMirror.fromTextArea(code, {
         lineNumbers: true, 
@@ -72,10 +78,5 @@
       });
     </script>
     <textarea id="console" cols="120" rows="30" name="console" style="display:none;"></textarea>
-    <div id="footer"><p>
-      <a href="http://racket-lang.org/">RACKET</a>&nbsp&nbsp&nbsp&nbsp&nbsp
-      <a href="https://www.cs.umd.edu/~dvanhorn/">DVH</a>&nbsp&nbsp&nbsp&nbsp&nbsp
-      <a href="https://github.com/plum-umd/try-scv-racket">CODE</a>
-    </p></div>
   </body>
 </html>

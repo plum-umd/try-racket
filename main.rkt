@@ -11,7 +11,7 @@
    #:listen-ip #f 
    #:port 8080
    #:servlet-regexp #rx""
-   #:extra-files-paths (list static)
+   #:extra-files-paths (list static "templates")
    #:servlet-path "/"
    #:manager mgr
    #:log-file "try-racket-serve-log.txt"))
