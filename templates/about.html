@@ -16,12 +16,11 @@
       <h1>SCV Racket</h1>
     </div>
     <div id="about">
+      <h3>About SCV Racket</h3>
       <p>
-        This is a demonstration of our
-        <a href="http://dl.acm.org/citation.cfm?id=2628156">work</a>
-        <a href="http://arxiv.org/abs/1411.3967">in progress</a> on contract verification
-        that generates counterexamples for higher-order functional programs
-        using symbolic execution.
+        This web page provides a demonstration of our work in progress
+        on contract verification and counterexample for higher-order
+        functional programs using symbolic execution.
       </p>
       <p>
         This tool verifies a module's correctness with respect to contracts,
@@ -31,6 +30,72 @@
         In addition, for each error that the module may actually cause,
         the tool generates a concrete input that triggers it.
       </p>
+      <h3>People</h3>
+      <p>
+	SCV Racket is developed
+	by <a href="http://www.cs.umd.edu/~pcn/">Phuc C. Nguyen</a>
+	and <a href="http://www.cs.umd.edu/~dvanhorn/">David Van
+	Horn</a> at the University of Maryland
+	and <a href="http://homes.soic.indiana.edu/samth/">Sam
+	Tobin-Hochstadt</a> at Indiana University.  This web page is
+	currently maintained
+	by <a href="https://github.com/cmentzer">Clayton Mentzer</a>
+	at Northeastern University.
+      </p>
+      <h3>Papers</h3>
+      <p>
+	To read about our approach to (soft) contract verification, see:
+	<ul>
+	  <li><b>Soft Contract Verification</b>, Phuc C. Nguyen, Sam
+	  Tobin-Hochstadt, and David Van Horn. <em>The ACM SIGPLAN
+	  International Conference on Functional Programming
+	  (ICFP'14)</em>. 
+	    <a href="http://dl.acm.org/citation.cfm?id=2628156">ACM</a>, 
+	    <a href="http://arxiv.org/abs/1307.6239">arXiv</a></li>
+	</ul>
+      </p>
+      <p>
+	To read about our approach to counterexamples, see:
+	<ul>
+	  <li><b>Relatively Complete Counterexamples for Higher-Order
+	  Programs</b>, Phuc C. Nguyen and David
+	  Van Horn. Preprint.
+	    <a href="http://arxiv.org/abs/1411.3967">arXiv</a></li>
+	</ul>
+      </p>
+      <p>
+	The above ICFP'14 paper improves upon and subsumes our earlier
+	work reported in OOPSLA'12:
+	<ul>
+	  <li><b>Higher-Order Symbolic Execution via Contracts</b>,
+	  Sam Tobin-Hochstadt and David Van Horn. <em>The ACM SIGPLAN
+	  Conference on Object-Oriented Programming, Systems,
+	  Languages, and Applications (OOPSLA'12)</em>
+	    <a href="http://dl.acm.org/citation.cfm?id=2384655">ACM</a>,
+	    <a href="http://arxiv.org/abs/1103.1362">arXiv</a></li>
+	</ul>	
+      </p>
+      <h3>Code</h3>
+      <p>
+	The verification engine is maintained in
+	the <a href="https://github.com/philnguyen/soft-contract"><tt>soft-contract</tt></a>
+	repository.  This web page and REPL is maintained in
+	the <a href="https://github.com/plum-umd/try-scv-racket"><tt>try-scv-racket</tt></a>
+	repository.
+      </p>
+      <h3>Feedback</h3>
+      <p>
+	We welcome feedback in the form of github issues.  If your
+	feedback concerns this web page or REPL, please submit issues
+	<a href="https://github.com/plum-umd/try-scv-racket/issues">here</a>.
+	Otherwise, please submit
+	issues <a href="https://github.com/philnguyen/soft-contract/issues">here</a>.
+      </p>
+      <h3>Support</h3>
+      <p>
+	SCV Racket is funded in part by the National Science
+	Foundation, the National Security Agency, and DARPA.
+      </p>	
     </div>
   </body>
 </html>
