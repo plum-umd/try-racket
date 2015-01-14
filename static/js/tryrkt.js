@@ -115,7 +115,7 @@ var examples = {
 }
 
 var example_texts = {
-  argmin: "The argmin example shows a case that involves constructing a higher-order counterexample.  Accordning to its contract, the argmin function consumes a unary function that produces a number and a (non-empty) list of numbers.  Its purpose is to produce the element of the list that minimizes the output of the function. The problem is that computing the mininum of two numbers is not always well-defined since complex numbers are not comparable.  This case occurs when (a) the list of numbers contains at least two elements and (b) the function produces a complex number.  In this instance, the contract given for argmin is erroneous, it should require its functional argument to produce /real/ numbers rather than (arbitrary) numbers.",
+  argmin: "The argmin example shows a case that involves constructing a higher-order counterexample.  According to its contract, the argmin function consumes a unary function that produces a number and a (non-empty) list of numbers.  Its purpose is to produce the element of the list that minimizes the output of the function. The problem is that computing the minimum of two numbers is not always well-defined since complex numbers are not comparable.  This case occurs when (a) the list of numbers contains at least two elements and (b) the function produces a complex number.  In this instance, the contract given for argmin is erroneous, it should require its functional argument to produce /real/ numbers rather than (arbitrary) numbers.",
 
   braun_tree:"The braun_tree example ...",
 
