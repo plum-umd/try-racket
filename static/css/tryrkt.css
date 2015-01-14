@@ -91,6 +91,11 @@ body {
   font-family:monospace;
   padding:0.1em; 
 }
+#console div.jquery-console-message-text {
+  color:#000000; 
+  font-family:monospace;
+  padding:0.1em; 
+}
 #console div.jquery-console-welcome
  {
   font-family:monospace;
@@ -210,12 +215,21 @@ div.continue {
   padding-left: 25%;
   padding-top: 5%;
   margin: 0;
+} 
+
+#example_text {
+  float:left;
+  width: 673px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 0.25em 0.25em 0.25em 0.25em;
+  background: #ffffff;
 }
 
 #doc {
   text-align: left;
   float: left;
-  margin: 0px;
+  width: 700px;
   padding: 0.25em 0.25em 0.25em 0.25em;
   background: #eeeeee;
   color: #333333;

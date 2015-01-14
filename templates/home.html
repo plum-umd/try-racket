@@ -39,13 +39,16 @@
           <div id="changer_result" class="jquery-console-message"></div>
           <!-- <button id="btn_copy" type="button" onclick="counterexample();copy()">Copy to Editor</button> -->
       </div>
-    <div id="instructions">
-      <p> 
-        To try the tool, enter a program to the left and press <code>Verify</code>
-        to run the verification, or <code>Run</code> to run it as a regular Racket program.
-        Select an example program from the top-left menu to load it.
-        We currently support a small functional subset of Racket:
-      </p>
+      <div id="instructions">
+        <p> 
+          To try the tool, enter a program to the left and press <code>Verify</code>
+          to run the verification, or <code>Run</code> to run it as a regular Racket program.
+          Select an example program from the top-left menu to load it.
+          We currently support a small functional subset of Racket:
+        </p>
+      </div>
+      <div id="example_text" class="jquery-console-message">
+      </div>
       <div id="doc">
         <pre>
           program          ::= (sub-module-form …)
@@ -69,14 +72,15 @@
                              | <b>cons?</b> | <b>empty?</b>
         </pre>
       </div>
-    <script type="text/javascript">
-      var myCodeMirror = CodeMirror.fromTextArea(code, {
-        lineNumbers: true, 
-        matchBrackets: true,
+      <script type="text/javascript">
+        var myCodeMirror = CodeMirror.fromTextArea(code, {
+          lineNumbers: true, 
+          matchBrackets: true,
 
 
-      });
-    </script>
-    <textarea id="console" cols="120" rows="30" name="console" style="display:none;"></textarea>
+        });
+     </script>
+     <textarea id="console" cols="120" rows="30" name="console" style="display:none;"></textarea>
+    </div>
   </body>
 </html>

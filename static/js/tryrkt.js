@@ -9,8 +9,8 @@ var examples = {
 \n  (require (submod \"..\" min))\
 \n  (define (argmin f xs)\
 \n    (cond [(empty? (cdr xs)) (f (car xs))]\
-\n	  [else (min (f (car xs))\
-\n		     (argmin f (cdr xs)))])))",
+\n    [else (min (f (car xs))\
+\n           (argmin f (cdr xs)))])))",
 
   braun_tree:"(module tree racket\
 \n  (provide\
@@ -22,12 +22,12 @@ var examples = {
 \n\
 \n  (define (braun-tree? x)\
 \n    (or (false? x)\
-\n	(and (node? x)\
-\n	     (braun-tree? (node-l x))\
-\n	     (braun-tree? (node-r x))\
-\n	     (let ([l (size (node-l x))]\
-\n		   [r (size (node-r x))])\
-\n	       (or (= l r) (= l (add1 r)))))))\
+\n  (and (node? x)\
+\n       (braun-tree? (node-l x))\
+\n       (braun-tree? (node-r x))\
+\n       (let ([l (size (node-l x))]\
+\n         [r (size (node-r x))])\
+\n         (or (= l r) (= l (add1 r)))))))\
 \n  \
 \n  (define (size x)\
 \n    (if (node? x)\
@@ -71,11 +71,11 @@ var examples = {
 \n    [dom/c any/c]))\
 \n  (define path/c\
 \n    (->i ([msg (one-of/c \"hd\" \"tl\")])\
-\n	 (res (msg) (cond [(equal? msg \"hd\") string?]\
-\n			  [else (or/c false? path/c)]))))\
+\n   (res (msg) (cond [(equal? msg \"hd\") string?]\
+\n            [else (or/c false? path/c)]))))\
 \n  (define dom/c\
 \n    (->i ([msg (one-of/c \"get-child\")])\
-\n	 (res (msg) (string? . -> . dom/c)))))\
+\n   (res (msg) (string? . -> . dom/c)))))\
 \n\
 \n(module get-path racket\
 \n  (provide (contract-out [get-path (dom/c path/c . -> . dom/c)]))\
@@ -114,21 +114,39 @@ var examples = {
 \n    (if (cons? x) (lastpair (cdr x)) x)))"
 }
 
+var example_texts = {
+  argmin: "The argmin example shows a case that involves constructing a higher-order counterexample.  Accordning to its contract, the argmin function consumes a unary function that produces a number and a (non-empty) list of numbers.  Its purpose is to produce the element of the list that minimizes the output of the function. The problem is that computing the mininum of two numbers is not always well-defined since complex numbers are not comparable.  This case occurs when (a) the list of numbers contains at least two elements and (b) the function produces a complex number.  In this instance, the contract given for argmin is erroneous, it should require its functional argument to produce /real/ numbers rather than (arbitrary) numbers.",
+
+  braun_tree:"The braun_tree example ...",
+
+  div100: "The div100 example shows a simple case of providing a numeric counterexample.  The contract for f states it takes integers and produces integers, but its implementation divides one over 100 minus the argument to the function.  There are two things wrong with this: (a) the program could produce a divide-by-zero error if the argument is 100, (b) the result not be an integer in cases such as the argument being 1.",
+
+  dynamic_tests: "The dynamic_tests example is a safe program that demonstrates the verification engines ability to reason through conditional control flow.",
+
+  foldl1: "The foldl1 example finds a bug in a shoddy version of foldl that tries to deconstruct a pair without first ensuring the input is not empty.",
+
+  get_path: "The get_path example...",
+
+  last: "The last example shows a counterexample for the function that computes the last element of a list.  In this case, the contract is incorrect because it doesn't require the input list to be non-empty.  The interesting aspect of this example is that the recursive last function is written using the Y-combinator, but this poses no problem for the verification engine.",
+
+  last_pair: "The last_pair example involves a lastpair function with the contract stating it consumes and produces pairs.  The problem is that if the input is an improper list (a list not terminating in empty), then the lastpair function does not produces a pair."
+}
+
 function loadExamples() {
     var selections = document.getElementById("examples");
     for (var exampleName in examples) {
-	var option = document.createElement("option");
-	var a = document.createAttribute("value");
-	a.value = exampleName;
-	var t = document.createTextNode(exampleName)
-	option.appendChild(t);
-	option.setAttributeNode(a);
-	if (exampleName === "div100") {
-	    var b = document.createAttribute("selected");
-	    b.value = "selected";
-	    option.setAttributeNode(b);
-	}
-	selections.appendChild(option);
+    var option = document.createElement("option");
+    var a = document.createAttribute("value");
+    a.value = exampleName;
+    var t = document.createTextNode(exampleName)
+    option.appendChild(t);
+    option.setAttributeNode(a);
+    if (exampleName === "div100") {
+        var b = document.createAttribute("selected");
+        b.value = "selected";
+        option.setAttributeNode(b);
+    }
+    selections.appendChild(option);
     }
     loadExample("div100");
 }
@@ -136,6 +154,7 @@ function loadExamples() {
 function loadExample(exampleName) {
     document.getElementById("console").value = examples[exampleName];
     myCodeMirror.setValue(document.getElementById("console").value)
+    setExampleText(example_texts[exampleName]);
 }
 
 function copy() {
@@ -144,19 +163,19 @@ function copy() {
 
 /*var currentPage = -1;
 var pages = [
-			"intro",
-			"go",
-			"definitions",
-			"binding",
-			"functions",
-			"scope",
-			"lists",
-			"modules",
-			"macros",
-			//"objects",
-			"where",
+            "intro",
+            "go",
+            "definitions",
+            "binding",
+            "functions",
+            "scope",
+            "lists",
+            "modules",
+            "macros",
+            //"objects",
+            "where",
       "end"
-		];
+        ];
 var pageExitConditions = [
     {
         verify: function(data) { return false; }
@@ -197,19 +216,19 @@ var pageExitConditions = [
 ];
 
 function goToPage(pageNumber) {
-	if (pageNumber == currentPage || pageNumber < 0 || pageNumber >= pages.length) {
-			return;
-	}
+    if (pageNumber == currentPage || pageNumber < 0 || pageNumber >= pages.length) {
+            return;
+    }
 
-	currentPage = pageNumber;
+    currentPage = pageNumber;
 
-	var block = $("#changer");
-  	block.fadeOut(function(e) {
-    	block.load("/tutorial", { 'page' : pages[pageNumber] }, function() {
+    var block = $("#changer");
+    block.fadeOut(function(e) {
+        block.load("/tutorial", { 'page' : pages[pageNumber] }, function() {
       block.fadeIn();
       changerUpdated();
-		});
-	});
+        });
+    });
 }
 */
 function setupLink(url) {
@@ -262,12 +281,22 @@ function setResult(result) {
     console.log("Result:");
     console.log(result);
     if (result.result) {
-	setMessage(result.result, "value");
+    setMessage(result.result, "value");
     } else if (result.result === "") /*HACK*/ {
-	setMessage("(Program run with no output)", "value");
+    setMessage("(Program run with no output)", "value");
     } else if (result.error) {
-	setMessage(result.message, "error");
+    setMessage(result.message, "error");
     }
+}
+
+function setExampleText(msg){
+    // Clear previous message
+    var example_text = document.getElementById("example_text");
+    while (example_text.firstChild) {
+    example_text.removeChild(example_text.firstChild);
+    }
+    // Append new message
+    example_text.appendChild(createP(msg, "text"));
 }
 
 function setMessage(msg, classs) {
@@ -276,7 +305,7 @@ function setMessage(msg, classs) {
     // Clear previous message
     var changer = document.getElementById("changer_result");
     while (changer.firstChild) {
-	changer.removeChild(changer.firstChild);
+    changer.removeChild(changer.firstChild);
     }
     // Append new message
     changer.appendChild(createP(msg, classs));
@@ -305,27 +334,27 @@ function createP(text, classs) {
 
 /*function doCommand(input) {
     console.log(input)
-		if (input.match(/^gopage /)) {
-				goToPage(parseInt(input.substring("gopage ".length)));
-				return true;
-		}
+        if (input.match(/^gopage /)) {
+                goToPage(parseInt(input.substring("gopage ".length)));
+                return true;
+        }
 
-		switch (input) {
-	  case 'next':
-	  case 'forward':
-    		goToPage(currentPage + 1);
-				return true;
-		case 'previous':
-		case 'prev':
-		case 'back':
-    		goToPage(currentPage - 1);
-				return true;
+        switch (input) {
+      case 'next':
+      case 'forward':
+            goToPage(currentPage + 1);
+                return true;
+        case 'previous':
+        case 'prev':
+        case 'back':
+            goToPage(currentPage - 1);
+                return true;
     case 'restart':
     case 'reset':
     case 'home':
     case 'quit':
-    		goToPage(0);
-      	return true;
+            goToPage(0);
+        return true;
     default:
         return false;
     }
@@ -362,35 +391,35 @@ function onHandle(line, report) {
     var input = $.trim(line);
     // handle commands
     /*if (doCommand(input)) {
-			report();
-			return;
-		}*/
+            report();
+            return;
+        }*/
     // perform evaluation
     var datas = eval_racket(input);
     var results = [];
 
     // handle error
     for (var i = 0; i < datas.length; i++) {
-	var data = datas[i];
-	console.log(data);
-	if (data.error) {
-	    results.push({msg: data.message, className: "jquery-console-message-error"});
-	} else if (data.timeout) {
-	    results.push({msg: "Timeout.", className: "jquery-console-message-timeout"});
-	} else if (data.safe) {
-	    results.push({msg: "Program is safe.", className: "jquery-console-message-value"});
-	} else if (/#\"data:image\/png;base64,/.test(data.result)) {
+    var data = datas[i];
+    console.log(data);
+    if (data.error) {
+        results.push({msg: data.message, className: "jquery-console-message-error"});
+    } else if (data.timeout) {
+        results.push({msg: "Timeout.", className: "jquery-console-message-timeout"});
+    } else if (data.safe) {
+        results.push({msg: "Program is safe.", className: "jquery-console-message-value"});
+    } else if (/#\"data:image\/png;base64,/.test(data.result)) {
             $('.jquery-console-inner').append('<img src="' + data.result.substring(2) + " />");
             controller.scrollToBottom();
-	    results.push({msg: "", className: "jquery-console-message-value"});
-	} else {
-	    results.push({msg: data.result, className: "jquery-console-message-value"});
-	}
+        results.push({msg: "", className: "jquery-console-message-value"});
+    } else {
+        results.push({msg: data.result, className: "jquery-console-message-value"});
+    }
     }
     
     // handle page (TODO disable for now, may need later)
     /*if (currentPage >= 0 && pageExitConditions[currentPage].verify(data)) {
-  			goToPage(currentPage + 1);
+            goToPage(currentPage + 1);
     }*/
     return results;
 }
