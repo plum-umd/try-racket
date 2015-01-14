@@ -1,0 +1,69 @@
+argmin
+------
+
+The argmin example shows a case that involves constructing a
+higher-order counterexample.  Accordning to its contract, the argmin
+function consumes a unary function that produces a number and a
+(non-empty) list of numbers.  Its purpose is to produce the element of
+the list that minimizes the output of the function.
+
+The problem is that computing the mininum of two numbers is not always
+well-defined since complex numbers are not comparable.  This case
+occurs when (a) the list of numbers contains at least two elements and
+(b) the function produces a complex number.  In this instance, the
+contract given for argmin is erroneous, it should require its
+functional argument to produce /real/ numbers rather than (arbitrary)
+numbers.
+
+braun_tree
+----------
+
+The braun_tree example ...
+
+div100
+------
+
+The div100 example shows a simple case of providing a numeric
+counterexample.  The contract for f states it takes integers and
+produces integers, but its implementation divides one over 100 minus
+the argument to the function.  There are two things wrong with this:
+(a) the program could produce a divide-by-zero error if the argument
+is 100, (b) the result not be an integer in cases such as the argument
+being 1.
+
+
+dynamic_tests
+-------------
+
+The dynamic_tests example is a safe program that demonstrates the
+verification engines ability to reason through conditional control
+flow.
+
+foldl1
+------
+
+The foldl1 example finds a bug in a shoddy version of foldl that tries
+to deconstruct a pair without first ensuring the input is not empty.
+
+get_path
+--------
+
+The get_path example...
+
+last
+----
+
+The last example shows a counterexample for the function that computes
+the last element of a list.  In this case, the contract is incorrect
+because it doesn't require the input list to be non-empty.  The
+interesting aspect of this example is that the recursive last function
+is written using the Y-combinator, but this poses no problem for the
+verification engine.
+
+last_pair
+---------
+
+The last_pair example involves a lastpair function with the contract
+stating it consumes and produces pairs.  The problem is that if the
+input is an improper list (a list not terminating in empty), then the
+lastpair function does not produces a pair.
