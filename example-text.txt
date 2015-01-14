@@ -18,7 +18,8 @@ numbers.
 braun_tree
 ----------
 
-The braun_tree example ...
+The braun_tree example shows a failure to maintain the Braun tree's
+invariant by not swapping the two branches when inserting.
 
 div100
 ------
@@ -48,7 +49,9 @@ to deconstruct a pair without first ensuring the input is not empty.
 get_path
 --------
 
-The get_path example...
+The get_path example shows a functional encoding of an object
+with two fields "hd" and "tl". In this case, the function accesses
+the wrong field, resulting in an error.
 
 last
 ----
