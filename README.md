@@ -1,7 +1,7 @@
 try-scv-racket
 ==============
 
-Soft Contract Verification (SCF) Racket	is an experimental variant of
+Soft Contract Verification (SCV) Racket	is an experimental variant of
 the Racket programming language	that enables static verification of
 contracts.  The	`try-scv-racket` repository implements a web-based REPL
 and tutorial for SCV Racket.
