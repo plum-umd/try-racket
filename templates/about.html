@@ -1,14 +1,53 @@
-<p class="bottom">
-Welcome to Try Racket - a quick tour of Racket for absolute beginners.
-</p>
-<p class="bottom">
-	 Here is our only disclaimer: this site is an introduction to Racket, not a Racket REPL. 
-	 You won't be able to do everything in it that you could do in your local interpreter. 
-	 <!-- Also, the interpreter deletes the data that you enter if you define too many things, or after 15 minutes. -->
-</p>
-<p class="bottom">
-   "Try Racket" is written in Racket and JavaScript with
-   Chris Done's <a href="https://github.com/chrisdone/jquery-console">jquery-console</a>.
-   It borrows a lot of code and content from <a href="http://www.tryclj.com/">Try Clojure</a> and <a href="https://github.com/samth/paste.rkt">paste.rkt</a>.
-   Hosting is provided by John Berry, who is also the current maintainer of the project. 
-</p>
+<html>
+  <head>
+    <link rel="stylesheet" href="css/codemirror.css">
+    <link rel="stylesheet" href="/css/tryrkt.css" type="text/css">
+    <link href="/css/gh-fork-ribbon.css" rel="stylesheet" type="text/css">
+    <script src="/js/codemirror.js"></script>
+    <script src="/js/matchbrackets.js"></script>
+    <script src="/js/racket.js"></script>
+    <script src="/js/jquery-1.4.2.min.js" type="text/javascript"></script>
+    <script src="/js/jquery.console.js" type="text/javascript"></script>
+    <script src="/js/tryrkt.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      evalUrl = "@url";
+    </script> 
+    <title>Try SCV</title>
+  </head>
+  <body>
+    <div id="header">
+      <h1>SCV Racket</h1>
+    </div>
+    <div id="wrapper">
+      <div id="container">
+          Examples: <select id="examples" onChange="loadExample(this.options[this.selectedIndex].text)"></select>           
+          <form>
+            <textarea id="code" cols="120" rows="30" name="code"></textarea>
+          </form>
+      </div>
+      <div id="changer">
+          <button id="btn_submit" autofocus="autofocus" type="button" onclick="copy();check()">Verify</button>
+          <button id="btn_run" type="button" onclick="copy();run()">Run</button>
+          <p class="bottom">Enter a program on the left to verify.</p>
+          <div id="changer_result" class="jquery-console-message"></div>
+          <!-- <button id="btn_copy" type="button" onclick="counterexample();copy()">Copy to Editor</button> -->
+      </div>
+    <div id="about">
+      <p>
+        This is a demonstration of our
+        <a href="http://dl.acm.org/citation.cfm?id=2628156">work</a>
+        <a href="http://arxiv.org/abs/1411.3967">in progress</a> on contract verification
+        that generates counterexamples for higher-order functional programs
+        using symbolic execution.
+      </p>
+      <p>
+        This tool verifies a module's correctness with respect to contracts,
+        which includes explicit declarations as well as implicit ones
+        for primitive operations.
+        Verified modules are guaranteed to be safe under all contexts.
+        In addition, for each error that the module may actually cause,
+        the tool generates a concrete input that triggers it.
+      </p>
+    </div>
+  </body>
+</html>
