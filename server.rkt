@@ -132,8 +132,7 @@
      [("") home]
      [("home") home]
      [("links") links]
-     [("about") about]
-     [("tutorial") #:method "post" tutorial]))
+     [("about") about]))
 
 ;;------------------------------------------------------------------
 ;; Responses
@@ -152,24 +151,6 @@
 ;;------------------------------------------------------------------
 ;; Request Handlers
 ;;------------------------------------------------------------------
-;; Tutorial pages
-(define (tutorial request)
-  (define page (dict-ref (request-bindings request) 'page #f))
-  (make-response
-   (match page
-     ("intro" (include-template "templates/tutorial/intro.html"))
-     ("go" (include-template "templates/tutorial/go.html"))
-     ("definitions" (include-template "templates/tutorial/definitions.html"))
-     ("binding" (include-template "templates/tutorial/binding.html"))
-     ("functions" (include-template "templates/tutorial/functions.html"))
-     ("scope" (include-template "templates/tutorial/scope.html"))
-     ("lists" (include-template "templates/tutorial/lists.html"))
-     ("modules" (include-template "templates/tutorial/modules.html"))
-     ("macros" (include-template "templates/tutorial/macros.html"))
-     ;("objects" (include-template "templates/tutorial/objects.html"))
-     ("where" (include-template "templates/tutorial/where.html"))
-     ("end" (include-template "templates/tutorial/end.html")))))
-    
 ;; Links page
 (define (links request)
     (make-response
