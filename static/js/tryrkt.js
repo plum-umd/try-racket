@@ -125,7 +125,7 @@ var example_texts = {
 
   foldl1: "The foldl1 example finds a bug in a shoddy version of foldl that tries to deconstruct a pair without first ensuring the input is not empty.",
 
-  get_path: "The get_path example shows a functional encoding of an object with two fields "hd" and "tl". In this case, the function accesses the wrong field, resulting in an error.",
+  get_path: "The get_path example shows a functional encoding of an object with two fields \"hd\" and \"tl\". In this case, the function accesses the wrong field, resulting in an error.",
 
   last: "The last example shows a counterexample for the function that computes the last element of a list.  In this case, the contract is incorrect because it doesn't require the input list to be non-empty.  The interesting aspect of this example is that the recursive last function is written using the Y-combinator, but this poses no problem for the verification engine.",
 
