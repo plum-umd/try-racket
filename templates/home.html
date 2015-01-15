@@ -35,15 +35,15 @@
       <div id="changer">
           <button id="btn_submit" autofocus="autofocus" type="button" onclick="copy();check()">Verify</button>
           <button id="btn_run" type="button" onclick="copy();run()">Run</button>
-          <p class="bottom">Enter a program on the left to verify.</p>
+          <span class="bottom">Enter a program above to verify.</span>
           <div id="changer_result" class="jquery-console-message"></div>
           <!-- <button id="btn_copy" type="button" onclick="counterexample();copy()">Copy to Editor</button> -->
       </div>
       <div id="instructions">
         <p> 
-          To try the tool, enter a program to the left and press <code>Verify</code>
+          To try the tool, enter a program above and press <code>Verify</code>
           to run the verification, or <code>Run</code> to run it as a regular Racket program.
-          Select an example program from the top-left menu to load it.
+          Select an example program from the menu at the top to load it.
           We currently support a small functional subset of Racket:
         </p>
       </div>
@@ -51,25 +51,25 @@
       </div>
       <div id="doc">
         <pre>
-          program          ::= (sub-module-form …)
-          sub-module-form  ::= (<b>module</b> module-name <b>racket</b>
-                                 (<b>provide</b> provide-spec …)
-                                 (<b>require</b> require-spec …)
-                                 (<b>struct</b> id (id …)) …
-                                 (<b>define</b> id value) …)
-          provide-spec     ::= id | (contract-out p/c-item …)
-          p/c-item         ::= (id contract) | (<b>struct</b> id ([id contract] …))
-          require-spec     ::= (<b>submod</b> <b>".."</b> module-name)
-          expr             ::= value | id | (<b>if</b> expr expr expr) | (expr expr …)
-          value            ::= number | boolean | string | symbol
-                             | op | (<b>lambda</b> (id …) expr)
-          contract         ::= expr | <b>any/c</b> | (<b>or/c</b> contract …) | (<b>and/c</b> contract …)
-                             | (<b>list/c</b> contract) | (<b>listof</b> contract)
-                             | (<b>struct/c</b> id contract …)
-                             | (<b>->i</b> ([id contract] …₁) (res (id …₁) contract))
-          op               ::= <b>+</b> | <b>-</b> | <b>*</b> | <b>/</b> | <b>string-length</b>
-                             | <b>number?</b> | <b>real?</b> | <b>integer?</b> | <b>boolean?</b> | <b>false?</b>
-                             | <b>cons?</b> | <b>empty?</b>
+    program          ::= (sub-module-form …)
+    sub-module-form  ::= (<b>module</b> module-name <b>racket</b>
+                           (<b>provide</b> provide-spec …)
+                           (<b>require</b> require-spec …)
+                           (<b>struct</b> id (id …)) …
+                           (<b>define</b> id value) …)
+    provide-spec     ::= id | (contract-out p/c-item …)
+    p/c-item         ::= (id contract) | (<b>struct</b> id ([id contract] …))
+    require-spec     ::= (<b>submod</b> <b>".."</b> module-name)
+    expr             ::= value | id | (<b>if</b> expr expr expr) | (expr expr …)
+    value            ::= number | boolean | string | symbol
+                       | op | (<b>lambda</b> (id …) expr)
+    contract         ::= expr | <b>any/c</b> | (<b>or/c</b> contract …) | (<b>and/c</b> contract …)
+                       | (<b>list/c</b> contract) | (<b>listof</b> contract)
+                       | (<b>struct/c</b> id contract …)
+                       | (<b>->i</b> ([id contract] …₁) (res (id …₁) contract))
+    op               ::= <b>+</b> | <b>-</b> | <b>*</b> | <b>/</b> | <b>string-length</b>
+                       | <b>number?</b> | <b>real?</b> | <b>integer?</b> | <b>boolean?</b> | <b>false?</b>
+                       | <b>cons?</b> | <b>empty?</b>
         </pre>
       </div>
       <script type="text/javascript">

@@ -5,7 +5,8 @@ var examples = {
 \n    (if (< x y) x y)))\
 \n\
 \n(module argmin racket\
-\n  (provide (contract-out [argmin ((-> any/c number?) (cons/c any/c (listof any/c)) . -> . any/c)]))\
+\n  (provide\
+\n    (contract-out [argmin ((-> any/c number?) (cons/c any/c (listof any/c)) . -> . any/c)]))\
 \n  (require (submod \"..\" min))\
 \n  (define (argmin f xs)\
 \n    (cond [(empty? (cdr xs)) (f (car xs))]\
@@ -57,7 +58,9 @@ var examples = {
 \n      [else 0])))",
 
   foldl1: "(module foldl1 racket\
-\n  (provide (contract-out [foldl1 ((any/c any/c . -> . any/c) (listof any/c) . -> . any/c)]))\
+\n  (provide\
+\n    (contract-out\
+\n      [foldl1 ((any/c any/c . -> . any/c) (listof any/c) . -> . any/c)]))\
 \n  (define (foldl1 f xs)\
 \n    (let ([z (car xs)]\
 \n          [zs (cdr xs)])\
@@ -91,7 +94,8 @@ var examples = {
   last: "(module Y racket\
 \n  (provide\
 \n   (contract-out\
-\n    [Y (([any/c . -> . any/c] . -> . [any/c . -> . any/c]) . -> . [any/c . -> . any/c])]))\
+\n    [Y (([any/c . -> . any/c] . -> . [any/c . -> . any/c])\
+\n        . -> . [any/c . -> . any/c])]))\
 \n  (define (Y f)\
 \n    (λ (y)\
 \n      (((λ (x) (f (λ (z) ((x x) z))))\
