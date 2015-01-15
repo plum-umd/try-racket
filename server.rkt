@@ -132,7 +132,8 @@
      [("") home]
      [("home") home]
      [("links") links]
-     [("about") about]))
+     [("about") about]
+     [("eval") eval-page]))
 
 ;;------------------------------------------------------------------
 ;; Responses
@@ -163,20 +164,11 @@
 
 ;; Home page
 (define (home request)
-  (home-with (make-ev) request))
-  
-(define (home-with ev request) 
-  (local [(define (response-generator embed/url)
-            (let ([url (embed/url next-eval)]
-                  ;[complete-url (embed/url next-complete)]
-                  )
-              (make-response
-               (include-template "templates/home.html"))))
-            (define (next-eval request)
-              (eval-with ev request))
-            ;(define (next-complete request)(complete-with ev request))
-            ]
-      (send/suspend/dispatch response-generator)))
+  (make-response (include-template "templates/home.html")))
+
+;; Eval page
+(define (eval-page request)
+  (eval-with (make-ev) request))
 
 ;; string string -> jsexpr
 (define (json-error expr msg)
