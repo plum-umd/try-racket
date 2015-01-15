@@ -1,6 +1,7 @@
 #lang racket/base
 
 (require json
+         racket
          racket/dict
          racket/file
          racket/local
@@ -11,6 +12,9 @@
          racket/string
          racket/system
          racket/pretty
+         racket/format
+         ;; just load it to share instances
+         (only-in soft-contract)
          web-server/dispatch
          web-server/http
          web-server/managers/lru
@@ -62,6 +66,7 @@
                  [sandbox-namespace-specs
                   (append (sandbox-namespace-specs)
                           `(file/convertible
+                            soft-contract
                             json))]
                  [sandbox-path-permissions (list* ; FIXME hack²
                                             (list 'exists "/")
@@ -81,6 +86,7 @@
                  [sandbox-namespace-specs
                   (append (sandbox-namespace-specs)
                           `(file/convertible
+                            racket
                             json))]
                  [sandbox-path-permissions '((read #rx#"racket-prefs.rktd"))])
     (make-evaluator 'racket)))
@@ -133,7 +139,7 @@
      [("home") home]
      [("links") links]
      [("about") about]
-     [("eval") eval-page]))
+     [("eval") eval-with]))
 
 ;;------------------------------------------------------------------
 ;; Responses
@@ -166,10 +172,6 @@
 (define (home request)
   (make-response (include-template "templates/home.html")))
 
-;; Eval page
-(define (eval-page request)
-  (eval-with (make-ev) request))
-
 ;; string string -> jsexpr
 (define (json-error expr msg)
   (hasheq 'expr expr 'error #true 'message msg))
@@ -190,51 +192,57 @@
        (json-error expr err)])))
 
 ;; Eval handler
-(define (eval-with ev request) 
+(define (eval-with request) 
   (define bindings (request-bindings request))
-  (cond [(and (exists-binding? 'expr bindings) (exists-binding? 'concrete bindings))
-         ;; TODO: hack + code dup. This case ignores `ev` and makes a new evaluator.
-         (define expr (hack-require-clause (extract-binding/single 'expr bindings)))
-         #;(printf "Run: ~a~n" expr)
-         
-         (define ev-rkt (make-ev-rkt))
-         
-         (define val (ev-rkt expr))
-         (define err
-           ;; HACK: seems to work most of the time
-           (match (get-error-output ev-rkt)
-             [(regexp #rx"(.+)(context...:.+)" (list _ s _)) s]
-             [s s]))
-         (define out (get-output ev-rkt))
-         (define res
-           (list (list (if (void? val) "" (format "~a" val))
-                       (and (not (equal? "" out)) out)
-                       (and (not (equal? "" err)) err))))
-         #;(printf "Res: ~a~n" (jsexpr->string (result-json expr res)))
-         (make-response
-          #:mime-type APPLICATION/JSON-MIME-TYPE
-          (jsexpr->string (result-json expr res)))]
-        [(exists-binding? 'expr bindings)
-         (define expr (format #|HACK|# "(~a)" (extract-binding/single 'expr bindings)))
-         (match-define-values ((list res) t₁ t₂ t₃) (time-apply run-code (list ev expr)))
-         (define response
-           (match-let ([(list response) (result-json expr res)]
-                       [time-str
-                        ;; TODO: what's the right way to format floats?
-                        (let ([str (format "~a" (* t₂ 0.001))])
-                          (define n (string-length str))
-                          (substring str 0 (min n 4)))])
-             (list (hash-set response 'time time-str))))
-         (make-response
-          #:mime-type APPLICATION/JSON-MIME-TYPE
-          (jsexpr->string response))]
-        [(exists-binding? 'complete bindings)
-         (define str (extract-binding/single 'complete bindings))
-         (make-response 
-          #:mime-type APPLICATION/JSON-MIME-TYPE
-          (jsexpr->string 
-           (result-json "" (complete-code ev str))))]
-        [else (make-response #:code 400 #:message #"Bad Request" "")]))
+  (cond 
+   ;; the "Run" button
+   [(and (exists-binding? 'expr bindings) (exists-binding? 'concrete bindings))
+    (define expr (hack-require-clause (extract-binding/single 'expr bindings)))
+    #;(printf "Run: ~a~n" expr)
+    
+    (define ev-rkt (make-ev-rkt))
+    
+    (define val (ev-rkt expr))
+    (define err
+      ;; HACK: seems to work most of the time
+      (match (get-error-output ev-rkt)
+        [(regexp #rx"(.+)(context...:.+)" (list _ s _)) s]
+        [s s]))
+    (define out (get-output ev-rkt))
+    (define res
+      (list (list (if (void? val) "" (format "~a" val))
+                  (and (not (equal? "" out)) out)
+                  (and (not (equal? "" err)) err))))
+    #;(printf "Res: ~a~n" (jsexpr->string (result-json expr res)))
+    (make-response
+     #:mime-type APPLICATION/JSON-MIME-TYPE
+     (jsexpr->string (result-json expr res)))]
+   ;; The "Verify" button
+   [(exists-binding? 'expr bindings)
+    (define start-time (current-process-milliseconds))
+    (define (new-time msg)
+      (define new (current-process-milliseconds))
+      (log-info msg (- new start-time))
+      (set! start-time new))
+    (new-time "Verifying ... ~a")
+    (define ev (make-ev))
+    (new-time "Created evaluator for verifying ... ~a")
+    (define expr (format #|HACK|# "(~a)" (extract-binding/single 'expr bindings)))
+    (match-define-values ((list res) t₁ t₂ t₃) (time-apply run-code (list ev expr)))
+    (new-time "Finished verifying ... ~a")
+    (kill-evaluator ev)
+    (new-time "Killed evaluator ... ~a")
+    (define response
+      (match-let ([(list response) (result-json expr res)]
+                  [time-str (~r (* t₂ 0.001) #:precision 3)])
+        (list (hash-set response 'time time-str))))
+    (make-response
+     #:mime-type APPLICATION/JSON-MIME-TYPE
+     (jsexpr->string response))]
+   ;; Something went wrong.
+   [else
+    (log-error "Bad request: ~a" request)
+    (make-response #:code 400 #:message #"Bad Request" "")]))
 
 (define (save-expr expr)
   (define fn (format "~a/~a.sch" out-programs-path (current-milliseconds)))
