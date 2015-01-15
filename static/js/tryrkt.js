@@ -6,7 +6,8 @@ var examples = {
 \n\
 \n(module argmin racket\
 \n  (provide\
-\n    (contract-out [argmin ((-> any/c number?) (cons/c any/c (listof any/c)) . -> . any/c)]))\
+\n    (contract-out\
+\n      [argmin ((-> any/c number?) (cons/c any/c (listof any/c)) . -> . any/c)]))\
 \n  (require (submod \"..\" min))\
 \n  (define (argmin f xs)\
 \n    (cond [(empty? (cdr xs)) (f (car xs))]\
