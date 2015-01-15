@@ -57,8 +57,8 @@
   (parameterize ([sandbox-output 'string]
                  [sandbox-error-output 'string]
                  [sandbox-propagate-exceptions #f]
-                 [sandbox-memory-limit 200]
-                 [sandbox-eval-limits (list 10 200)]
+                 [sandbox-memory-limit 400]
+                 [sandbox-eval-limits (list 20 400)]
                  [sandbox-namespace-specs
                   (append (sandbox-namespace-specs)
                           `(file/convertible
@@ -163,7 +163,7 @@
 
 ;; Home page
 (define (home request)
-    (home-with (make-ev) request))
+  (home-with (make-ev) request))
   
 (define (home-with ev request) 
   (local [(define (response-generator embed/url)
