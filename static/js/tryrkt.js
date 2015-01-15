@@ -124,7 +124,7 @@ var example_texts = {
 
   braun_tree: "The braun_tree example shows a failure to maintain the Braun tree's invariant by not swapping the two branches when inserting.",
 
-  div100: "The div100 example shows a simple case of providing a numeric counterexample.  The contract for f states it takes integers and produces integers, but its implementation divides one over 100 minus the argument to the function.  There are two things wrong with this: (a) the program could produce a divide-by-zero error if the argument is 100, (b) the result not be an integer in cases such as the argument being 1.",
+  div100: "The div100 example shows a simple case of providing a numeric counterexample.  The contract for f states it takes integers and produces integers, but its implementation divides one over 100 minus the argument to the function.  There are two things wrong with this: (a) the program could produce a divide-by-zero error if the argument is 100, (b) the result might not be an integer in some cases such as the argument being 1.",
 
   dynamic_tests: "The dynamic_tests example is a safe program that demonstrates the verification engines ability to reason through conditional control flow.",
 
