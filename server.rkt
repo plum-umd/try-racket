@@ -224,9 +224,18 @@
           (jsexpr->string (result-json expr res)))]
         [(exists-binding? 'expr bindings)
          (define expr (format #|HACK|# "(~a)" (extract-binding/single 'expr bindings)))
+         (match-define-values ((list res) t₁ t₂ t₃) (time-apply run-code (list ev expr)))
+         (define response
+           (match-let ([(list response) (result-json expr res)]
+                       [time-str
+                        ;; TODO: what's the right way to format floats?
+                        (let ([str (format "~a" (* t₂ 0.001))])
+                          (define n (string-length str))
+                          (substring str 0 (min n 4)))])
+             (list (hash-set response 'time time-str))))
          (make-response
           #:mime-type APPLICATION/JSON-MIME-TYPE
-          (jsexpr->string (result-json expr (run-code ev expr))))]
+          (jsexpr->string response))]
         [(exists-binding? 'complete bindings)
          (define str (extract-binding/single 'complete bindings))
          (make-response 

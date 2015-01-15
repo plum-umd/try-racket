@@ -286,11 +286,19 @@ function setResult(result) {
     console.log("Result:");
     console.log(result);
     if (result.result) {
-    setMessage(result.result, "value");
+	setMessage(result.result + "\n" + msg_time(result), "value");
     } else if (result.result === "") /*HACK*/ {
-    setMessage("(Program run with no output)", "value");
+	setMessage("(Program run with no output)", "value");
     } else if (result.error) {
-    setMessage(result.message, "error");
+	setMessage(result.message + "\n" + msg_time(result), "error");
+    }
+}
+
+function msg_time(result) {
+    if (result.time) {
+	return "(Verification takes " + result.time + "s)";
+    } else {
+	return "";
     }
 }
 
