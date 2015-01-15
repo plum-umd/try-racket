@@ -95,7 +95,7 @@
       (λ (x ...)
         (hash-ref! m (list x ...) (λ () e ...))))))
 
-(define/memo (run-code ev str)
+(define (run-code ev str)
   (define val (ev str)) 
   (define err
     ;; HACK: seems to work most of the time
