@@ -1,18 +1,35 @@
 var examples = {
-  argmin: "(module min racket\
-\n  (provide (contract-out [min (real? real? . -> . real?)]))\
-\n  (define (min x y)\
-\n    (if (< x y) x y)))\
-\n\
-\n(module argmin racket\
+  argmin_unsafe: "(module argmin racket\
 \n  (provide\
 \n    (contract-out\
-\n      [argmin ((-> any/c number?) (cons/c any/c (listof any/c)) . -> . any/c)]))\
-\n  (require (submod \"..\" min))\
+\n      [argmin ((any/c . -> . number?) (cons/c any/c (listof any/c)) . -> . any/c)]))\
+\n\
+\n  ;; Produce the element that minimizes f\
 \n  (define (argmin f xs)\
-\n    (cond [(empty? (cdr xs)) (f (car xs))]\
-\n    [else (min (f (car xs))\
-\n           (argmin f (cdr xs)))])))",
+\n    (argmin/acc f (car xs) (f (car xs)) (cdr xs)))\
+\n\
+\n  (define (argmin/acc f a b xs)\
+\n    (if (empty? xs)\
+\n        a\
+\n        (if (< b (f (car xs)))\
+\n            (argmin/acc f a b (cdr xs))\
+\n            (argmin/acc f (car xs) (f (car xs)) (cdr xs))))))",
+
+  argmin_safe: "(module argmin racket\
+\n  (provide\
+\n    (contract-out\
+\n      [argmin ((any/c . -> . real?) (cons/c any/c (listof any/c)) . -> . any/c)]))\
+\n\
+\n  ;; Produce the element that minimizes f\
+\n  (define (argmin f xs)\
+\n    (argmin/acc f (car xs) (f (car xs)) (cdr xs)))\
+\n\
+\n  (define (argmin/acc f a b xs)\
+\n    (if (empty? xs)\
+\n        a\
+\n        (if (< b (f (car xs)))\
+\n            (argmin/acc f a b (cdr xs))\
+\n            (argmin/acc f (car xs) (f (car xs)) (cdr xs))))))",
 
   braun_tree:"(module tree racket\
 \n  (provide\
@@ -137,7 +154,9 @@ var examples = {
 }
 
 var example_texts = {
-  argmin: "The argmin example shows a case that involves constructing a higher-order counterexample.  According to its contract, the argmin function consumes a unary function that produces a number and a (non-empty) list of numbers.  Its purpose is to produce the element of the list that minimizes the output of the function. The problem is that computing the minimum of two numbers is not always well-defined since complex numbers are not comparable.  This case occurs when (a) the list of numbers contains at least two elements and (b) the function produces a complex number.  In this instance, the contract given for argmin is erroneous, it should require its functional argument to produce /real/ numbers rather than (arbitrary) numbers.",
+  argmin_unsafe: "The unsafe argmin example shows a case that involves constructing a higher-order counterexample.  According to its contract, the argmin function consumes a unary function that produces a number and a (non-empty) list of numbers.  Its purpose is to produce the element of the list that minimizes the output of the function. The problem is that computing the minimum of two numbers is not always well-defined since complex numbers are not comparable.  This case occurs when (a) the list of numbers contains at least two elements and (b) the function produces a complex number.  In this instance, the contract given for argmin is erroneous, it should require its functional argument to produce /real/ numbers rather than (arbitrary) numbers.",
+
+  argmin_safe: "The safe argmin example changes <tt>number?</tt> to <tt>real?</tt> in the contract for argmin, making it safe.",
 
   braun_tree: "The braun_tree example shows a failure to maintain the Braun tree's invariant by not swapping the two branches when inserting.",
 
