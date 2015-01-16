@@ -116,7 +116,17 @@ var examples = {
 \n  (provide\
 \n   (contract-out [lastpair (cons? . -> . cons?)]))\
 \n  (define (lastpair x)\
-\n    (if (cons? x) (lastpair (cdr x)) x)))"
+\n    (if (cons? x) (lastpair (cdr x)) x)))",
+
+  fact: "(module factorial racket\
+\n  (define (fact x)
+\n    (if (zero? x)
+\n        1
+\n        (* x (fact (sub1 x)))))
+\n  
+\n  (provide
+\n   (contract-out
+\n    [fact (-> (>=/c 0) (>=/c 0))])))"
 }
 
 var example_texts = {
@@ -134,7 +144,9 @@ var example_texts = {
 
   last: "The last example shows a counterexample for the function that computes the last element of a list.  In this case, the contract is incorrect because it doesn't require the input list to be non-empty.  The interesting aspect of this example is that the recursive last function is written using the Y-combinator, but this poses no problem for the verification engine.",
 
-  last_pair: "The last_pair example involves a lastpair function with the contract stating it consumes and produces pairs.  The problem is that if the input is an improper list (a list not terminating in empty), then the lastpair function does not produces a pair."
+  last_pair: "The last_pair example involves a lastpair function with the contract stating it consumes and produces pairs.  The problem is that if the input is an improper list (a list not terminating in empty), then the lastpair function does not produces a pair.",
+
+  fact: "Standard factorial example."
 }
 
 function loadExamples() {
