@@ -119,13 +119,13 @@ var examples = {
 \n    (if (cons? x) (lastpair (cdr x)) x)))",
 
   fact: "(module factorial racket\
-\n  (define (fact x)
-\n    (if (zero? x)
-\n        1
-\n        (* x (fact (sub1 x)))))
-\n  
-\n  (provide
-\n   (contract-out
+\n  (define (fact x)\
+\n    (if (zero? x)\
+\n        1\
+\n        (* x (fact (sub1 x)))))\
+\n  \
+\n  (provide\
+\n   (contract-out\
 \n    [fact (-> (>=/c 0) (>=/c 0))])))"
 }
 
