@@ -24,12 +24,12 @@ var examples = {
 \n\
 \n  (define (braun-tree? x)\
 \n    (or (false? x)\
-\n  (and (node? x)\
-\n       (braun-tree? (node-l x))\
-\n       (braun-tree? (node-r x))\
-\n       (let ([l (size (node-l x))]\
-\n         [r (size (node-r x))])\
-\n         (or (= l r) (= l (add1 r)))))))\
+\n        (and (node? x)\
+\n             (braun-tree? (node-l x))\
+\n             (braun-tree? (node-r x))\
+\n             (let ([l (size (node-l x))]\
+\n                   [r (size (node-r x))])\
+\n               (or (= l r) (= l (add1 r)))))))\
 \n  \
 \n  (define (size x)\
 \n    (if (node? x)\
