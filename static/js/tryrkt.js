@@ -126,7 +126,14 @@ var examples = {
 \n  \
 \n  (provide\
 \n   (contract-out\
-\n    [fact (-> (>=/c 0) (>=/c 0))])))"
+\n    [fact (-> (>=/c 0) (>=/c 0))])))",
+
+  ext: "(module m racket\
+\n  (provide (contract-out [f ((integer? . -> . integer?) . -> . \
+\n                             (integer? . -> . true?))]))\
+\n  (define (f g)\
+\n    (λ (n)\
+\n      (= (g n) (g n)))))"
 }
 
 var example_texts = {
@@ -146,7 +153,9 @@ var example_texts = {
 
   last_pair: "The last_pair example involves a lastpair function with the contract stating it consumes and produces pairs.  The problem is that if the input is an improper list (a list not terminating in empty), then the lastpair function does not produces a pair.",
 
-  fact: "Standard factorial example."
+  fact: "Standard factorial example.",
+
+  ext: "This example shows that functions are assumed to be pure.  On equal inputs, a function produces equal outputs."
 }
 
 function loadExamples() {
