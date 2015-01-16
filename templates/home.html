@@ -66,6 +66,7 @@
     contract         ::= expr | <b>any/c</b> | (<b>or/c</b> contract …) | (<b>and/c</b> contract …)
                        | (<b>list/c</b> contract) | (<b>listof</b> contract)
                        | (<b>struct/c</b> id contract …)
+                       | (<b>&lt;/c</b> expr) | (<b><=/c</b> expr) | (<b>>/c</b> expr) | (<b>>=/c</b> expr) | (<b>=/c</b> expr)
                        | (<b>->i</b> ([id contract] …₁) (res (id …₁) contract))
     op               ::= <b>+</b> | <b>-</b> | <b>*</b> | <b>/</b> | <b>string-length</b>
                        | <b>number?</b> | <b>real?</b> | <b>integer?</b> | <b>boolean?</b> | <b>false?</b>
