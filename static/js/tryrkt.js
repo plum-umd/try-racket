@@ -150,7 +150,14 @@ var examples = {
 \n                             (integer? . -> . true?))]))\
 \n  (define (f g)\
 \n    (λ (n)\
-\n      (= (g n) (g n)))))"
+\n      (= (g n) (g n)))))",
+
+  dependent: "(module square racket\
+\n  (provide (contract-out\
+\n            [sqr (->i ([x integer?])\
+\n                      [res (x) (>=/c x)])]))\
+\n  (define (sqr n)\
+\n    (* n n)))"
 }
 
 var example_texts = {
@@ -174,7 +181,9 @@ var example_texts = {
 
   fact: "Standard factorial example.",
 
-  ext: "This example shows that functions are assumed to be pure.  On equal inputs, a function produces equal outputs."
+  ext: "This example shows that functions are assumed to be pure.  On equal inputs, a function produces equal outputs.",
+  
+  dependent: "This example shows a simple use of dependent contracts."
 }
 
 function loadExamples() {
