@@ -1,20 +1,19 @@
 #lang racket/base
 
-(require json
+(require "eval.rkt"
+         json
          racket
+         racket/sandbox
          racket/dict
          racket/file
          racket/local
          racket/match
          racket/port
          racket/runtime-path
-         racket/sandbox
          racket/string
          racket/system
          racket/pretty
          racket/format
-         ;; just load it to share instances
-         (only-in soft-contract)
          web-server/dispatch
          web-server/http
          web-server/managers/lru
@@ -49,41 +48,11 @@
 ;;------------------------------------------------------------------
 ;; sandbox
 ;;------------------------------------------------------------------
-;; make-ev : -> evaluator
 
 (define next!
   (let ([x 0])
     (λ ()
       (begin0 x (set! x (add1 x))))))
-
-;; Make sandboxed soft-contract evaluator
-(define (make-ev)
-  (parameterize ([sandbox-output 'string]
-                 [sandbox-error-output 'string]
-                 [sandbox-propagate-exceptions #f]
-                 [sandbox-memory-limit 400]
-                 [sandbox-eval-limits (list 20 400)]
-                 [sandbox-namespace-specs
-                  (append (sandbox-namespace-specs) '(soft-contract))]
-                 [sandbox-path-permissions (list* ; FIXME hack²
-                                            (list 'exists "/")
-                                            ;; execute below is fine for now because SCV doesn't have side effects
-                                            ;; we need this to run Z3
-                                            (list 'execute "/bin/sh")
-                                            '((read #rx#"racket-prefs.rktd")))])
-    (make-evaluator 'soft-contract)))
-
-;; Make sandboxed Racket evaluator
-(define (make-ev-rkt)
-  (parameterize ([sandbox-output 'string]
-                 [sandbox-error-output 'string]
-                 [sandbox-propagate-exceptions #f]
-                 [sandbox-memory-limit 200]
-                 [sandbox-eval-limits (list 2 200)]
-                 [sandbox-namespace-specs
-                  (append (sandbox-namespace-specs) '(racket))]
-                 [sandbox-path-permissions '((read #rx#"racket-prefs.rktd"))])
-    (make-evaluator 'racket)))
 
 ;; Handle arbitrary number of results, gathered into a list
 (define-syntax-rule (zero-or-more e)
