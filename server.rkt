@@ -64,10 +64,7 @@
                  [sandbox-memory-limit 400]
                  [sandbox-eval-limits (list 20 400)]
                  [sandbox-namespace-specs
-                  (append (sandbox-namespace-specs)
-                          `(file/convertible
-                            soft-contract
-                            json))]
+                  (append (sandbox-namespace-specs) '(soft-contract))]
                  [sandbox-path-permissions (list* ; FIXME hack²
                                             (list 'exists "/")
                                             ;; execute below is fine for now because SCV doesn't have side effects
@@ -84,10 +81,7 @@
                  [sandbox-memory-limit 200]
                  [sandbox-eval-limits (list 2 200)]
                  [sandbox-namespace-specs
-                  (append (sandbox-namespace-specs)
-                          `(file/convertible
-                            racket
-                            json))]
+                  (append (sandbox-namespace-specs) '(racket))]
                  [sandbox-path-permissions '((read #rx#"racket-prefs.rktd"))])
     (make-evaluator 'racket)))
 
