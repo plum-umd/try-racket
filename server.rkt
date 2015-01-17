@@ -49,11 +49,6 @@
 ;; sandbox
 ;;------------------------------------------------------------------
 
-(define next!
-  (let ([x 0])
-    (λ ()
-      (begin0 x (set! x (add1 x))))))
-
 ;; Handle arbitrary number of results, gathered into a list
 (define-syntax-rule (zero-or-more e)
   (call-with-values (λ () e) (λ xs xs)))
