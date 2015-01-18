@@ -11,7 +11,7 @@
 (define (make-ev)
   (parameterize ([sandbox-output 'string]
                  [sandbox-error-output 'string]
-                 [sandbox-propagate-exceptions #f]
+                 [sandbox-propagate-exceptions #t]
                  [sandbox-memory-limit 400]
                  [sandbox-eval-limits (list 20 400)]
                  [sandbox-namespace-specs
@@ -22,7 +22,11 @@
                                             ;; we need this to run Z3
                                             (list 'execute "/bin/sh")
                                             '((read #rx#"racket-prefs.rktd")))])
-    (make-evaluator 'soft-contract)))
+    ;; Get rid of initial safe message for empty program
+    (define ev
+      (make-evaluator 'soft-contract))
+    (get-output ev)
+    ev))
 
 ;; Make sandboxed Racket evaluator
 (define (make-ev-rkt)
