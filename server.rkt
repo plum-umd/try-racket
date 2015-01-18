@@ -77,7 +77,6 @@
   (dispatch-rules
    [("") home]
    [("home") home]
-   [("links") links]
    [("about") about]
    [("eval") eval-with]))
 
@@ -98,11 +97,6 @@
 ;;------------------------------------------------------------------
 ;; Request Handlers
 ;;------------------------------------------------------------------
-;; Links page
-(define (links request)
-  (make-response
-   (include-template "templates/links.html")))
-
 ;; About page
 (define (about request)
   (make-response
