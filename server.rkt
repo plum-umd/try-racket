@@ -64,7 +64,7 @@
     (list (list (if (void? val) "" (format "~s" val))
                 (and (not (equal? "" out)) out)
                 (and (exn? val) (exn-message val)))))
-  (respond (result-json expr res)))
+  (respond (result-json res)))
 
 (define (verify bindings)
   (define start-time (current-process-milliseconds))
@@ -81,7 +81,7 @@
   (kill-evaluator ev)
   (new-time "Killed evaluator ... ~a")
   (define response
-    (match-let ([(list response) (result-json expr res)]
+    (match-let ([(list response) (result-json res)]
                 [time-str (~r (* t₂ 0.001) #:precision 3)])
       (list (hash-set response 'time time-str))))
   (respond response))
@@ -160,24 +160,24 @@
 
 
 
-;; string string -> jsexpr
-(define (json-error expr msg)
-  (hasheq 'expr expr 'error #true 'message msg))
+;; string -> jsexpr
+(define (json-error msg)
+  (hasheq 'error #true 'message msg))
 
-;; string string -> jsexpr
-(define (json-result expr res)
-  (hasheq 'expr expr 'result res))
+;; string -> jsexpr
+(define (json-result res)
+  (hasheq 'result res))
 
-;; string (Listof eval-result) -> (Listof jsexpr)
-(define (result-json expr lsts)
+;; (Listof eval-result) -> (Listof jsexpr)
+(define (result-json lsts)
   (for/list ([lst lsts])
     (match lst
       [(list res #f #f)
-       (json-result expr res)]
+       (json-result res)]
       [(list res out #f)
-       (json-result expr (string-append out res))]
+       (json-result (string-append out res))]
       [(list _ _ err)
-       (json-error expr err)])))
+       (json-error err)])))
 
 (define (save-expr expr)
   (define fn (format "~a/~a.sch" out-programs-path (current-milliseconds)))
