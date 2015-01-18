@@ -56,17 +56,14 @@
 (define (run bindings)
   (define expr (hack-require-clause (extract-binding/single 'expr bindings)))  
   (define ev-rkt (make-ev-rkt))  
-  (define val (ev-rkt expr))
-  (define err
-    ;; HACK: seems to work most of the time
-    (match (get-error-output ev-rkt)
-      [(regexp #rx"(.+)(context...:.+)" (list _ s _)) s]
-      [s s]))
+  (define val
+    (with-handlers ([(λ (_) #t) (λ (exn) exn)])
+      (ev-rkt expr)))
   (define out (get-output ev-rkt))
   (define res
-    (list (list (if (void? val) "" (format "~a" val))
+    (list (list (if (void? val) "" (format "~s" val))
                 (and (not (equal? "" out)) out)
-                (and (not (equal? "" err)) err))))
+                (and (exn? val) (exn-message val)))))
   (respond (result-json expr res)))
 
 (define (verify bindings)
@@ -187,15 +184,10 @@
   (display-to-file expr fn #:exists 'append))
 
 ;; Replace each `(submod ".." name)` with `'name`
-(define (hack-require-clause str)
+(define (hack-require-clause sexpr)
   (define replace
     (match-lambda
       [`(submod ".." ,name) `(quote ,name)]
       [(list xs ...) (map replace xs)]
-      [(? string? s) (format "\"~a\"" s)]
       [x x]))
-  (define converted (replace (with-input-from-string (format "(~a)" str) read)))
-  (string-join
-   (for/list ([sexp converted])
-     (format "~a" sexp))
-   "\n"))
+  (replace sexpr))

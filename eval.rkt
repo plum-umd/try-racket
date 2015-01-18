@@ -28,7 +28,7 @@
 (define (make-ev-rkt)
   (parameterize ([sandbox-output 'string]
                  [sandbox-error-output 'string]
-                 [sandbox-propagate-exceptions #f]
+                 [sandbox-propagate-exceptions #t]
                  [sandbox-memory-limit 200]
                  [sandbox-eval-limits (list 2 200)]
                  [sandbox-namespace-specs
