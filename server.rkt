@@ -162,7 +162,7 @@
 
 ;; string -> jsexpr
 (define (json-error msg)
-  (hasheq 'error #true 'message msg))
+  (hasheq 'error msg))
 
 ;; string -> jsexpr
 (define (json-result res)

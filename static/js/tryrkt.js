@@ -269,7 +269,7 @@ function setResult(result) {
     } else if (result.result === "") /*HACK*/ {
 	setMessage("(Program run with no output)", "value");
     } else if (result.error) {
-	setMessage(result.message + "\n" + msg_time(result), "error");
+	setMessage(result.error + "\n" + msg_time(result), "error");
     }
 }
 
