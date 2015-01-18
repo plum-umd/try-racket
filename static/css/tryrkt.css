@@ -107,14 +107,12 @@ body {
 .error{
  color:#ef0505;
  font-family:monospace;
- padding:0.1em;
  white-space: pre;
 }
 
 .print{
  color:#810084;
  font-family:monospace;
- padding:0.1em;
  white-space: pre;
 }
 
@@ -127,7 +125,6 @@ body {
 .timeout{
  color:#cb4b16;
  font-family:monospace;
- padding:0.1em;
 }
 
 #buttons {
