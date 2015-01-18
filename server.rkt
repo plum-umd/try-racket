@@ -2,7 +2,6 @@
 (require "eval.rkt"
          json
          racket/sandbox
-         racket/dict
          racket/file
          racket/match
          racket/port
@@ -96,12 +95,8 @@
 
 (define (respond jsexpr)
   (make-response
-   #:mime-type APPLICATION/JSON-MIME-TYPE
+   #:mime-type #"application/json;charset=utf-8"
    (jsexpr->string jsexpr)))
-
-(define APPLICATION/JSON-MIME-TYPE #"application/json;charset=utf-8")
-
-(module+ test (require rackunit))
 
 (define out-root
   (match (current-command-line-arguments)
