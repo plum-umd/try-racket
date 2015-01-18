@@ -53,20 +53,54 @@
   (and (exists-binding? 'expr bindings) 
        (not (run? bindings))))
 
+(define (read-all-string str)
+  (port->list (λ (x) (read-syntax "repl" x))
+              (open-input-string str)))
+
+(struct res (out val))
+(define (make-ev/out ev)
+  (λ (x)
+    (define r (ev x))
+    (res (get-output ev) r)))
+
 (define (run bindings)
-  (define expr (hack-require-clause (extract-binding/single 'expr bindings)))  
-  (define ev-rkt (make-ev-rkt))  
-  (define val
-    (with-handlers ([(λ (_) #t) (λ (exn) exn)])
-      (ev-rkt expr)))
-  (define out (get-output ev-rkt))
-  (define res
-    (list (list (if (void? val) "" (format "~s" val))
-                (and (not (equal? "" out)) out)
-                (and (exn? val) (exn-message val)))))
-  (respond (result-json res)))
+  (define expr-str (hack-require-clause (extract-binding/single 'expr bindings)))
+  (save-expr expr-str)
+  (define exprs (read-all-string expr-str))
+  (define %ev (make-ev-rkt))
+  (define ev-rkt (make-ev/out %ev)) 
+  (define ress+err    
+    (let loop ([es exprs])
+      (cond [(empty? es) '()]
+            [else             
+             (define res
+               (with-handlers ([(λ (_) #t) (λ (exn) exn)])
+                 (ev-rkt (first es))))
+             (if (exn? res)
+                 (list res)
+                 (cons res (loop (rest es))))])))
+     
+  (when (evaluator-alive? %ev)
+    (kill-evaluator %ev))
+  
+  (respond
+   (let ()
+     (define response
+       (foldr
+        (λ (res+exn js)
+          (cond [(exn? res+exn) (cons (json-error res+exn) js)]
+                [(res? res+exn) (list* (json-print (res-out res+exn))
+                                       (json-result (res-val res+exn))
+                                       js)]))
+        '()
+        ress+err))
+     response)))
+   
+    
 
 (define (verify bindings)
+  (define expr (string-append "(" (extract-binding/single 'expr bindings) ")"))
+  (save-expr expr)
   (define start-time (current-process-milliseconds))
   (define (new-time msg)
     (define new (current-process-milliseconds))
@@ -75,16 +109,34 @@
   (new-time "Verifying ... ~a")
   (define ev (make-ev))
   (new-time "Created evaluator for verifying ... ~a")
-  (define expr (format #|HACK|# "(~a)" (extract-binding/single 'expr bindings)))
-  (match-define-values ((list res) t₁ t₂ t₃) (time-apply run-code (list ev expr)))
+  
+  (match-define-values
+   ((list val) t₁ t₂ t₃) 
+   (time-apply (λ ()
+                 (with-handlers ([(λ (_) #t) (λ (exn) exn)])
+                   (ev expr)))
+               '()))
+  
+  (define out (get-output ev))
+
+    
   (new-time "Finished verifying ... ~a")
-  (kill-evaluator ev)
-  (new-time "Killed evaluator ... ~a")
-  (define response
-    (match-let ([(list response) (result-json res)]
-                [time-str (~r (* t₂ 0.001) #:precision 3)])
-      (list (hash-set response 'time time-str))))
-  (respond response))
+  (when (evaluator-alive? ev)
+    (kill-evaluator ev))
+  (new-time "Killed evaluator ... ~a")  
+  
+  (define time-str (~r (* t₂ 0.001) #:precision 3))
+ (respond
+  (let ()
+    (define response
+      (let ()
+        (define ans
+          (cond [(exn? val) (json-error val)]
+                [(not (string=? "" out)) (json-print out)]
+                [else (json-result val)]))
+        
+        (list (hash-set ans 'time time-str))))    
+    response)))
 
 (define (bad request)
   (log-error "Bad request: ~a" request)
@@ -110,26 +162,6 @@
 (printf "Programs are logged at: ~a~n" out-programs-path)
 
 
-;;------------------------------------------------------------------
-;; sandbox
-;;------------------------------------------------------------------
-
-(define (run-code ev str)
-  (define val (ev str))
-  (define err
-    ;; HACK: seems to work most of the time
-    (match (get-error-output ev)
-      [(regexp #rx"(.+)(context...:.+)" (list _ s _)) s]
-      [s s]))
-  (define out (get-output ev))
-
-  ;; Log
-  (save-expr
-   (format "~a~n~n#|Result:~n~a~n~a~n~a~n|#~n" str val err out))
-
-  (list (list (if (void? val) "" (format "~a" val))
-              (and (not (equal? "" out)) out)
-              (and (not (equal? "" err)) err))))
 
 (define (complete-code ev str)
   (define res (ev  `(jsexpr->string (namespace-completion ,str))))
@@ -160,28 +192,24 @@
 
 
 
-;; string -> jsexpr
-(define (json-error msg)
-  (hasheq 'error msg))
+;; exn -> jsexpr
+(define (json-error x)
+  (hasheq 'error (exn-message x)))
+
+;; val -> jsexpr
+(define (json-result x)
+  (hasheq 'result (format "~s" x)))
 
 ;; string -> jsexpr
-(define (json-result res)
-  (hasheq 'result res))
+(define (json-print x)
+  (hasheq 'print x))
 
-;; (Listof eval-result) -> (Listof jsexpr)
-(define (result-json lsts)
-  (for/list ([lst lsts])
-    (match lst
-      [(list res #f #f)
-       (json-result res)]
-      [(list res out #f)
-       (json-result (string-append out res))]
-      [(list _ _ err)
-       (json-error err)])))
 
 (define (save-expr expr)
   (define fn (format "~a/~a.sch" out-programs-path (current-milliseconds)))
   (display-to-file expr fn #:exists 'append))
+
+;; FIXME given string -- does nothing
 
 ;; Replace each `(submod ".." name)` with `'name`
 (define (hack-require-clause sexpr)

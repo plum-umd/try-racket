@@ -258,24 +258,35 @@ function check() {
     var results = verify_racket(document.getElementById("console").value);
     console.log("Results:");
     console.log(results);
-    setResult(results[0]); // better be a singleton
+    setResult(results);
 }
 
-function setResult(result) {
-    console.log("Result:");
-    console.log(result);
-    if (result.result) {
-	setMessage(result.result + "\n" + msg_time(result), "value");
-    } else if (result.result === "") /*HACK*/ {
-	setMessage("(Program run with no output)", "value");
-    } else if (result.error) {
-	setMessage(result.error + "\n" + msg_time(result), "error");
+function setResult(results) {
+    console.log("Results:");
+    console.log(results);
+    setMessage("");
+    var out_p = false;
+    for (var i in results) {
+	var result = results[i];
+	if (result.result === "#<void>") {
+	    addMessage("", "value");
+	} else if (result.print) {
+	    if (!(result.print === "")) out_p = true;
+	    addMessage(result.print, "print");
+	} else if (result.error) {
+	    out_p = true;
+	    addMessage(result.error + msg_time(result) + "\n", "error");
+	} else if (result.result) {
+	    out_p = true;
+	    addMessage(result.result + msg_time(result) + "\n", "value");
+	}
     }
+    if (!out_p) { addMessage("(Program run with no output)", "value")};
 }
 
 function msg_time(result) {
     if (result.time) {
-	return "(Verification takes " + result.time + "s)";
+	return "\n (Verification takes " + result.time + "s)";
     } else {
 	return "";
     }
@@ -303,8 +314,16 @@ function setMessage(msg, classs) {
     changer.appendChild(createP(msg, classs));
 }
 
+function addMessage(msg, classs) {
+    console.log("addMessage:");
+    console.log([msg, classs]);
+    var changer = document.getElementById("changer_result");
+    changer.appendChild(createP(msg, classs));
+}
+    
+
 function createP(text, classs) {
-    var p = document.createElement("div");
+    var p = document.createElement("span");
     var t = document.createTextNode(text);
     var a = document.createAttribute("class");
     a.value = classs;
@@ -334,9 +353,9 @@ function changerUpdated() {
 
 function run() {
     setMessage("Running...", "timeout");
-    console.log("About to verify");
+    console.log("About to run");
     var results = run_racket(document.getElementById("console").value);
     console.log("Results:");
     console.log(results);
-    setResult(results[0]); // better be a singleton
+    setResult(results);
 }
