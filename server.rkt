@@ -6,21 +6,17 @@
          racket/sandbox
          racket/dict
          racket/file
-         racket/local
          racket/match
          racket/port
          racket/runtime-path
          racket/string
          racket/system
-         racket/pretty
          racket/format
-         web-server/dispatch
-         web-server/http
          web-server/managers/lru
          web-server/servlet
          web-server/templates)
 
-(provide (all-defined-out))
+(provide dispatch mgr static)
 
 (define APPLICATION/JSON-MIME-TYPE #"application/json;charset=utf-8")
 
@@ -41,23 +37,9 @@
 (printf "Programs are logged at: ~a~n" out-programs-path)
 
 
-;; Paths
-(define autocomplete
-  (build-path (current-directory) "autocomplete.rkt"))
-
 ;;------------------------------------------------------------------
 ;; sandbox
 ;;------------------------------------------------------------------
-
-;; Handle arbitrary number of results, gathered into a list
-(define-syntax-rule (zero-or-more e)
-  (call-with-values (λ () e) (λ xs xs)))
-
-(define-syntax-rule (define/memo (f x ...) e ...)
-  (define f
-    (let ([m (make-weak-hash)])
-      (λ (x ...)
-        (hash-ref! m (list x ...) (λ () e ...))))))
 
 (define (run-code ev str)
   (define val (ev str))
