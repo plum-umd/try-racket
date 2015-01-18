@@ -99,7 +99,7 @@
     
 
 (define (verify bindings)
-  (define expr (string-append "(" (extract-binding/single 'expr bindings) ")"))
+  (define expr (string-append "(" (extract-binding/single 'expr bindings) "\n)"))
   (save-expr expr)
   (define start-time (current-process-milliseconds))
   (define (new-time msg)
