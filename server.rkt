@@ -64,9 +64,9 @@
     (res (get-output ev) r)))
 
 (define (run bindings)
-  (define expr-str (hack-require-clause (extract-binding/single 'expr bindings)))
+  (define expr-str (extract-binding/single 'expr bindings))
   (save-expr expr-str)
-  (define exprs (read-all-string expr-str))
+  (define exprs (map hack-require-clause (read-all-string expr-str)))
   (define %ev (make-ev-rkt))
   (define ev-rkt (make-ev/out %ev)) 
   (define ress+err    
@@ -210,12 +210,13 @@
   (display-to-file expr fn #:exists 'append))
 
 ;; FIXME given string -- does nothing
+(require (only-in syntax/parse syntax-parse ~datum))
 
 ;; Replace each `(submod ".." name)` with `'name`
 (define (hack-require-clause sexpr)
-  (define replace
-    (match-lambda
-      [`(submod ".." ,name) `(quote ,name)]
-      [(list xs ...) (map replace xs)]
-      [x x]))
+  (define (replace stx)
+    (syntax-parse stx
+      [((~datum submod) ".." name) #'(quote name)]
+      [(f ...) (datum->syntax stx (map replace (syntax->list stx)))]
+      [x #'x]))
   (replace sexpr))
