@@ -1,8 +1,6 @@
-#lang racket/base
-
+#lang racket
 (require "eval.rkt"
          json
-         racket
          racket/sandbox
          racket/dict
          racket/file
@@ -12,11 +10,94 @@
          racket/string
          racket/system
          racket/format
-         web-server/managers/lru
          web-server/servlet
          web-server/templates)
 
-(provide dispatch mgr static)
+(provide static dispatch)
+
+(define-runtime-path static "./static")
+
+;;------------------------------------------------------------------
+;; Routes
+;;------------------------------------------------------------------
+(define-values (dispatch urls)
+  (dispatch-rules
+   [("") home]
+   [("home") home]
+   [("about") about]
+   [("eval") eval]))
+
+;;------------------------------------------------------------------
+;; Request Handlers
+;;------------------------------------------------------------------
+;; Home page
+(define (home request)
+  (make-response (include-template "templates/home.html")))
+
+;; About page
+(define (about request)
+  (make-response
+   (include-template "templates/about.html")))
+
+;; Eval handler
+(define (eval request)
+  (define bindings (request-bindings request))
+  (cond [(run? bindings) (run bindings)]
+        [(verify? bindings) (verify bindings)]
+        [else (bad request)]))
+
+(define (run? bindings)
+  (and (exists-binding? 'expr bindings) 
+       (exists-binding? 'concrete bindings)))
+
+(define (verify? bindings)
+  (and (exists-binding? 'expr bindings) 
+       (not (run? bindings))))
+
+(define (run bindings)
+  (define expr (hack-require-clause (extract-binding/single 'expr bindings)))  
+  (define ev-rkt (make-ev-rkt))  
+  (define val (ev-rkt expr))
+  (define err
+    ;; HACK: seems to work most of the time
+    (match (get-error-output ev-rkt)
+      [(regexp #rx"(.+)(context...:.+)" (list _ s _)) s]
+      [s s]))
+  (define out (get-output ev-rkt))
+  (define res
+    (list (list (if (void? val) "" (format "~a" val))
+                (and (not (equal? "" out)) out)
+                (and (not (equal? "" err)) err))))
+  (respond (result-json expr res)))
+
+(define (verify bindings)
+  (define start-time (current-process-milliseconds))
+  (define (new-time msg)
+    (define new (current-process-milliseconds))
+    (log-info msg (- new start-time))
+    (set! start-time new))
+  (new-time "Verifying ... ~a")
+  (define ev (make-ev))
+  (new-time "Created evaluator for verifying ... ~a")
+  (define expr (format #|HACK|# "(~a)" (extract-binding/single 'expr bindings)))
+  (match-define-values ((list res) t₁ t₂ t₃) (time-apply run-code (list ev expr)))
+  (new-time "Finished verifying ... ~a")
+  (kill-evaluator ev)
+  (new-time "Killed evaluator ... ~a")
+  (define response
+    (match-let ([(list response) (result-json expr res)]
+                [time-str (~r (* t₂ 0.001) #:precision 3)])
+      (list (hash-set response 'time time-str))))
+  (respond response))
+
+(define (bad request)
+  (log-error "Bad request: ~a" request)
+  (make-response #:code 400 #:message #"Bad Request" ""))
+
+(define (respond jsexpr)
+  (make-response
+   #:mime-type APPLICATION/JSON-MIME-TYPE
+   (jsexpr->string jsexpr)))
 
 (define APPLICATION/JSON-MIME-TYPE #"application/json;charset=utf-8")
 
@@ -70,15 +151,6 @@
         (and (not (equal? out "")) out)
         (and (not (equal? err "")) err)))
 
-;;------------------------------------------------------------------
-;; Routes
-;;------------------------------------------------------------------
-(define-values (dispatch urls)
-  (dispatch-rules
-   [("") home]
-   [("home") home]
-   [("about") about]
-   [("eval") eval-with]))
 
 ;;------------------------------------------------------------------
 ;; Responses
@@ -94,17 +166,7 @@
   (response/full code message seconds mime-type headers
                  (list (string->bytes/utf-8 content))))
 
-;;------------------------------------------------------------------
-;; Request Handlers
-;;------------------------------------------------------------------
-;; About page
-(define (about request)
-  (make-response
-   (include-template "templates/about.html")))
 
-;; Home page
-(define (home request)
-  (make-response (include-template "templates/home.html")))
 
 ;; string string -> jsexpr
 (define (json-error expr msg)
@@ -125,86 +187,9 @@
       [(list _ _ err)
        (json-error expr err)])))
 
-;; Eval handler
-(define (eval-with request)
-  (define bindings (request-bindings request))
-  (cond
-    ;; the "Run" button
-    [(and (exists-binding? 'expr bindings) (exists-binding? 'concrete bindings))
-     (define expr (hack-require-clause (extract-binding/single 'expr bindings)))
-     #;(printf "Run: ~a~n" expr)
-
-     (define ev-rkt (make-ev-rkt))
-
-     (define val (ev-rkt expr))
-     (define err
-       ;; HACK: seems to work most of the time
-       (match (get-error-output ev-rkt)
-         [(regexp #rx"(.+)(context...:.+)" (list _ s _)) s]
-         [s s]))
-     (define out (get-output ev-rkt))
-     (define res
-       (list (list (if (void? val) "" (format "~a" val))
-                   (and (not (equal? "" out)) out)
-                   (and (not (equal? "" err)) err))))
-     #;(printf "Res: ~a~n" (jsexpr->string (result-json expr res)))
-     (make-response
-      #:mime-type APPLICATION/JSON-MIME-TYPE
-      (jsexpr->string (result-json expr res)))]
-    ;; The "Verify" button
-    [(exists-binding? 'expr bindings)
-     (define start-time (current-process-milliseconds))
-     (define (new-time msg)
-       (define new (current-process-milliseconds))
-       (log-info msg (- new start-time))
-       (set! start-time new))
-     (new-time "Verifying ... ~a")
-     (define ev (make-ev))
-     (new-time "Created evaluator for verifying ... ~a")
-     (define expr (format #|HACK|# "(~a)" (extract-binding/single 'expr bindings)))
-     (match-define-values ((list res) t₁ t₂ t₃) (time-apply run-code (list ev expr)))
-     (new-time "Finished verifying ... ~a")
-     (kill-evaluator ev)
-     (new-time "Killed evaluator ... ~a")
-     (define response
-       (match-let ([(list response) (result-json expr res)]
-                   [time-str (~r (* t₂ 0.001) #:precision 3)])
-         (list (hash-set response 'time time-str))))
-     (make-response
-      #:mime-type APPLICATION/JSON-MIME-TYPE
-      (jsexpr->string response))]
-    ;; Something went wrong.
-    [else
-     (log-error "Bad request: ~a" request)
-     (make-response #:code 400 #:message #"Bad Request" "")]))
-
 (define (save-expr expr)
   (define fn (format "~a/~a.sch" out-programs-path (current-milliseconds)))
   (display-to-file expr fn #:exists 'append))
-
-
-;;------------------------------------------------------------------
-;; Server
-;;------------------------------------------------------------------
-(define (ajax? req)
-  (string=? (dict-ref (request-headers req) 'x-requested-with "")
-            "XMLHttpRequest"))
-
-(define (expiration-handler req)
-  (if (ajax? req)
-      (make-response
-       #:mime-type APPLICATION/JSON-MIME-TYPE
-       (jsexpr->string
-        (json-error "" "Sorry, your session has expired. Please reload the page.")))
-      (response/xexpr
-       `(html (head (title "Page Has Expired."))
-	      (body (p "Sorry, this page has expired. Please reload the page."))))))
-
-
-(define-runtime-path static "./static")
-
-(define mgr
-  (make-threshold-LRU-manager expiration-handler (* 256 1024 1024)))
 
 ;; Replace each `(submod ".." name)` with `'name`
 (define (hack-require-clause str)
