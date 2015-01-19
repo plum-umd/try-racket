@@ -12,7 +12,7 @@
          web-server/servlet
          web-server/templates)
 
-(provide static dispatch)
+(provide static dispatch verify make-ev-rkt make-ev)
 
 (define-runtime-path static "./static")
 

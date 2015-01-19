@@ -30,10 +30,10 @@
 (define dummy-url (url #f #f #f #f #f null null #f))
 
 ;; Bytes -> Json
-(define (verify s)
+(define (verify-bytes s)
   (define req
     (request #"" dummy-url null (delay (list (binding:form #"expr" s))) #f "" 0 ""))
-  (define res (eval-with (make-ev) req))
+  (define res (verify req))
   (string->jsexpr
    (with-output-to-string
        (λ ()
@@ -41,7 +41,7 @@
 
 ;; Bytes -> Hash
 (define (check-unique-result s)
-  (define reses (verify s))
+  (define reses (verify-bytes s))
   (check-true (list? reses))
   (check-equal? 1 (length reses))
   (define res (car reses))
