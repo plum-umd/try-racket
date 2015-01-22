@@ -1,5 +1,5 @@
 #lang racket/base
-(provide make-ev make-ev-rkt)
+(provide make-ev make-ev-rkt hack-require-clause)
 (require racket/sandbox
          ;; just load it to share instances
          (only-in soft-contract))
@@ -39,3 +39,17 @@
                   (append (sandbox-namespace-specs) '(racket))]
                  [sandbox-path-permissions '((read #rx#"racket-prefs.rktd"))])
     (make-evaluator 'racket)))
+
+
+;; FIXME given string -- does nothing
+(require (only-in syntax/parse syntax-parse ~datum))
+
+;; Replace each `(submod ".." name)` with `'name`
+(define (hack-require-clause sexpr)
+  (define (replace stx)
+    (syntax-parse stx
+      [((~datum submod) ".." name) #'(quote name)]
+      [(f ...) (datum->syntax stx (map replace (syntax->list stx)))]
+      [x #'x]))
+
+  (replace sexpr))

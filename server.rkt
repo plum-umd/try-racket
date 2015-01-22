@@ -99,7 +99,7 @@
     
 
 (define (verify bindings)
-  (define expr (string-append "(" (extract-binding/single 'expr bindings) "\n)"))
+  (define expr (extract-binding/single 'expr bindings))
   (save-expr expr)
   (define start-time (current-process-milliseconds))
   (define (new-time msg)
@@ -114,7 +114,7 @@
    ((list val) t₁ t₂ t₃) 
    (time-apply (λ ()
                  (with-handlers ([(λ (_) #t) (λ (exn) exn)])
-                   (ev expr)))
+                   (ev (list expr))))
                '()))
   
   (define out (get-output ev))
@@ -209,14 +209,3 @@
   (define fn (format "~a/~a.sch" out-programs-path (current-milliseconds)))
   (display-to-file expr fn #:exists 'append))
 
-;; FIXME given string -- does nothing
-(require (only-in syntax/parse syntax-parse ~datum))
-
-;; Replace each `(submod ".." name)` with `'name`
-(define (hack-require-clause sexpr)
-  (define (replace stx)
-    (syntax-parse stx
-      [((~datum submod) ".." name) #'(quote name)]
-      [(f ...) (datum->syntax stx (map replace (syntax->list stx)))]
-      [x #'x]))
-  (replace sexpr))
