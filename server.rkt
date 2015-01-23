@@ -99,8 +99,9 @@
     
 
 (define (verify bindings)
-  (define expr (extract-binding/single 'expr bindings))
-  (save-expr expr)
+  (define expr-str (extract-binding/single 'expr bindings))
+  (save-expr expr-str)
+  (define exprs (read-all-string expr-str))
   (define start-time (current-process-milliseconds))
   (define (new-time msg)
     (define new (current-process-milliseconds))
@@ -114,7 +115,7 @@
    ((list val) t₁ t₂ t₃) 
    (time-apply (λ ()
                  (with-handlers ([(λ (_) #t) (λ (exn) exn)])
-                   (ev (list expr))))
+                   (ev exprs)))
                '()))
   
   (define out (get-output ev))
