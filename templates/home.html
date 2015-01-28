@@ -35,14 +35,16 @@
       <div id="changer">
           <button id="btn_submit" autofocus="autofocus" type="button" onclick="copy();check()">Verify</button>
           <button id="btn_run" type="button" onclick="copy();run()">Run</button>
+          <button id="btn_test" type="button" onclick="copy();test()">Test</button>
           <span class="bottom">Enter a program above to verify.</span>
           <div id="changer_result" class="jquery-console-message"></div>
-          <!-- <button id="btn_copy" type="button" onclick="counterexample();copy()">Copy to Editor</button> -->
       </div>
       <div id="instructions">
         <p> 
           To try the tool, enter a program above and press <code>Verify</code>
           to run the verification, or <code>Run</code> to run it as a regular Racket program.
+          The <code>Test</code> button uses random testing to attempt to find a counterexample, 
+          and is useful as a comparison the the verification tool.
           Select an example program from the menu at the top to load it.
           We currently support a small functional subset of Racket:
         </p>

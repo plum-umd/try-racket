@@ -42,6 +42,7 @@
 (define (eval request)
   (define bindings (request-bindings request))
   (cond [(run? bindings) (run bindings)]
+        [(test? bindings) (test bindings)]
         [(verify? bindings) (verify bindings)]
         [else (bad request)]))
 
@@ -53,6 +54,10 @@
   (and (exists-binding? 'expr bindings) 
        (not (run? bindings))))
 
+(define (test? bindings) 
+  (and (exists-binding? 'expr bindings)
+       (exists-binding? 'asdf bindings)))
+
 (define (read-all-string str)
   (port->list (λ (x) (read-syntax "repl" x))
               (open-input-string str)))
@@ -62,6 +67,50 @@
   (λ (x)
     (define r (ev x))
     (res (get-output ev) r)))
+
+
+(define (test bindings)
+  (define expr-str (extract-binding/single 'expr bindings))
+  (define exprs (syntax->datum (hack-require-clause (datum->syntax #f (read-all-string expr-str)))))
+  (define %ev (make-ev-rkt))
+  (define ev-rkt (make-ev/out %ev)) 
+
+  (define (try-module m)
+    (match m
+      [(list-rest 'module m-name 'racket _)
+        (ev-rkt m)
+        (define-values (vals stxs) (%ev `(module->exports '',m-name)))
+        (ev-rkt `(require ',m-name))
+        (for ([i (dict-ref (append vals stxs) 0)])
+          (ev-rkt `(contract-exercise ,(car i))))]
+      [_ (error "invalid module definition")]))
+
+
+ (define res
+  (with-handlers ([(λ (_) #t) (λ (exn) exn)])
+    (for ([expr (in-list exprs)])
+      (try-module expr))))
+
+  (define ress+err            
+   (if (exn? res)
+       (list res)
+       (list "no counterexample found")))
+     
+  (when (evaluator-alive? %ev)
+    (kill-evaluator %ev))
+  
+  (respond
+   (let ()
+     (define response
+       (foldr
+        (λ (res+exn js)
+          (cond [(exn? res+exn) (cons (json-error res+exn) js)]
+                [(res? res+exn) (list* (json-print (res-out res+exn))
+                                       (json-result (res-val res+exn))
+                                       js)]))
+        '()
+        ress+err))
+     response)))
 
 (define (run bindings)
   (define expr-str (extract-binding/single 'expr bindings))

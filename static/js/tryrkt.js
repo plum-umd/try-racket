@@ -252,10 +252,30 @@ function run_racket(code) {
     return data;
 }
 
+function test_racket(code) {
+    var data;
+    $.ajax({
+        url: evalUrl,
+        data: { expr : code , asdf : true},
+        async: false,
+        success: function(res) { data = res; },
+    });
+    return data;
+}
+
 function check() {
     setMessage("Verifying...", "timeout");
     console.log("About to verify");
     var results = verify_racket(document.getElementById("console").value);
+    console.log("Results:");
+    console.log(results);
+    setResult(results);
+}
+
+function test() {
+    setMessage("Running random tests...", "timeout");
+    console.log("About to random test");
+    var results = test_racket(document.getElementById("console").value);
     console.log("Results:");
     console.log(results);
     setResult(results);
