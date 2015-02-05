@@ -14,7 +14,7 @@
     </script> 
     <title>Try SCV</title>
   </head>
-  <body onload="loadExamples()">
+  <body onload="loadExamples">
     <div id="header">
       <div id="logo">
         SCV Racket
@@ -25,12 +25,189 @@
         <a href="/about">About</a></h1>
       </div>
     </div>
+    <div id="main_nav">
+      <ul>
+        <li>
+          <a href="javascript:void(0)">Main Examples</a>
+          <ul>
+            <li><a onclick = loadExample("argmin_unsafe"); href="javascript:void(0)">argmin_unsafe</a></li>
+            <li><a onclick = loadExample("argmin_safe"); href="javascript:void(0)">argmin_safe</a></li>
+            <li><a onclick = loadExample("braun_tree"); href="javascript:void(0)">braun_tree</a></li>
+            <li><a onclick = loadExample("div100"); href="javascript:void(0)">div100</a></li>
+            <li><a onclick = loadExample("dynamic_tests"); href="javascript:void(0)">dynamic_tests</a></li>
+            <li><a onclick = loadExample("foldl1"); href="javascript:void(0)">foldl1</a></li>
+            <li><a onclick = loadExample("get_path"); href="javascript:void(0)">get_path</a></li>
+            <li><a onclick = loadExample("last"); href="javascript:void(0)">last</a></li>
+            <li><a onclick = loadExample("last_pair"); href="javascript:void(0)">last_pair</a></li>
+            <li><a onclick = loadExample("fact"); href="javascript:void(0)">fact</a></li>
+            <li><a onclick = loadExample("ext"); href="javascript:void(0)">ext</a></li>
+            <li><a onclick = loadExample("dependent"); href="javascript:void(0)">dependent</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="javascript:void(0)">Fail Examples</a>
+          <ul>
+            <li>
+              <a href="javascript:void(0)">Games</a>
+              <ul>
+                <li><a onclick = loadExample("fail_ce_tetris"); href="javascript:void(0)">Tetris</a></li>
+                <li><a onclick = loadExample("fail_ce_snake"); href="javascript:void(0)">Snake</a></li>
+                <li><a onclick = loadExample("fail_ce_zombie"); href="javascript:void(0)">Zombie</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="javascript:void(0)">Lists</a>
+              <ul>
+                <li><a onclick = loadExample("fail_ce_flatten"); href="javascript:void(0)">Flatten</a></li>
+                <li><a onclick = loadExample("fail_ce_foldr"); href="javascript:void(0)">Foldr</a></li>
+                <li><a onclick = loadExample("fail_ce_foldr1"); href="javascript:void(0)">Foldr1</a></li>
+                <li><a onclick = loadExample("fail_ce_mem"); href="javascript:void(0)">Mem</a></li>
+                <li><a onclick = loadExample("fail_ce_foldl_div"); href="javascript:void(0)">Fold_div</a></li>
+                <li><a onclick = loadExample("fail_ce_member"); href="javascript:void(0)">Member</a></li>
+                <li><a onclick = loadExample("fail_ce_all"); href="javascript:void(0)">All</a></li>
+                <li><a onclick = loadExample("fail_ce_foldl"); href="javascript:void(0)">Foldl</a></li>
+                <li><a onclick = loadExample("fail_ce_braun_tree"); href="javascript:void(0)">Braun_Tree</a></li>
+                <li><a onclick = loadExample("fail_ce_append"); href="javascript:void(0)">Append</a></li>
+                <li><a onclick = loadExample("fail_ce_l_zipmap"); href="javascript:void(0)">Zipmap</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="javascript:void(0)">Math</a>
+              <ul>
+                <li><a onclick = loadExample("fail_ce_recip"); href="javascript:void(0)">Recip</a></li>
+                <li><a onclick = loadExample("fail_ce_argmin"); href="javascript:void(0)">Argmin</a></li>
+                <li><a onclick = loadExample("fail_ce_sum"); href="javascript:void(0)">Sum</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="javascript:void(0)">Other</a>
+              <ul>
+                <li><a onclick = loadExample("fail_ce_last"); href="javascript:void(0)">Last</a></li>
+                <li><a onclick = loadExample("fail_ce_last_pair"); href="javascript:void(0)">Last_Pair</a></li>
+                <li><a onclick = loadExample("fail_ce_ack"); href="javascript:void(0)">Ack</a></li>
+                <li><a onclick = loadExample("fail_ce_id_dependent"); href="javascript:void(0)">Last</a></li>
+                <li><a onclick = loadExample("fail_ce_get_path"); href="javascript:void(0)">Get_Path</a></li>
+                <li><a onclick = loadExample("fail_ce_l_zipunzip"); href="javascript:void(0)">Zip-unzip</a></li>
+                <li><a onclick = loadExample("fail_ce_inc_or_greet"); href="javascript:void(0)">Inc_or_greet</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="javascript:void(0)">Safe Examples</a>
+          <ul>
+            <li>
+              <a href="javascript:void(0)">Games</a>
+              <ul>
+                <li><a onclick = loadExample("safe_tetris"); href="">Tetris</a></li>
+                <li><a onclick = loadExample("safe_snake"); href="javascript:void(0)">Snake</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="javascript:void(0)">Lists</a>
+              <ul>
+                <li><a onclick = loadExample("safe_length_acc"); href="javascript:void(0)">Length_Acc</a></li>
+                <li><a onclick = loadExample("safe_ex_11"); href="javascript:void(0)">ex_11</a></li>
+                <li><a onclick = loadExample("safe_sum_filter"); href="javascript:void(0)">sum_filter</a></li>
+                <li><a onclick = loadExample("safe_filter"); href="javascript:void(0)">filter</a></li>
+                <li><a onclick = loadExample("safe_flatten"); href="javascript:void(0)">flatten</a></li>
+                <li><a onclick = loadExample("safe_nth0"); href="javascript:void(0)">nth0</a></li>
+                <li><a onclick = loadExample("safe_foldr"); href="javascript:void(0)">foldr</a></li>
+                <li><a onclick = loadExample("safe_mem"); href="javascript:void(0)">mem</a></li>
+                <li><a onclick = loadExample("safe_fold_div"); href="javascript:void(0)">fold_div</a></li>
+                <li><a onclick = loadExample("safe_mappend"); href="javascript:void(0)">mappend</a></li>
+                <li><a onclick = loadExample("safe_member"); href="javascript:void(0)">member</a></li>
+                <li><a onclick = loadExample("safe_all"); href="javascript:void(0)">all</a></li>
+                <li><a onclick = loadExample("safe_ex_03"); href="javascript:void(0)">ex_03</a></li>
+                <li><a onclick = loadExample("safe_foldr1"); href="javascript:void(0)">foldr1</a></li>
+                <li><a onclick = loadExample("safe_foldl"); href="javascript:void(0)">foldl</a></li>
+                <li><a onclick = loadExample("safe_reverse_dep"); href="javascript:void(0)">reverse_dep</a></li>
+                <li><a onclick = loadExample("safe_length"); href="javascript:void(0)">length</a></li>
+                <li><a onclick = loadExample("safe_append"); href="javascript:void(0)">foldl1</a></li>
+                <li><a onclick = loadExample("safe_map_foldr"); href="javascript:void(0)">map_foldr</a></li>
+                <li><a onclick = loadExample("safe_tree_depth"); href="javascript:void(0)">tree_depth</a></li>
+                <li><a onclick = loadExample("safe_reverse"); href="javascript:void(0)">reverse</a></li>
+                <li><a onclick = loadExample("safe_insertion_sort"); href="javascript:void(0)">insertion_sort</a></li>
+                <li><a onclick = loadExample("safe_fold_fun_list"); href="javascript:void(0)">fold_fun_list</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="javascript:void(0)">Math</a>
+              <ul>
+                <li><a onclick = loadExample("safe_recursive_div2"); href="javascript:void(0)">Div2</a></li>
+                <li><a onclick = loadExample("safe_recip"); href="javascript:void(0)">recip</a></li>
+                <li><a onclick = loadExample("safe_recip_contract"); href="javascript:void(0)">recip_contract</a></li>
+                <li><a onclick = loadExample("safe_ho_opaque"); href="javascript:void(0)">ho_opaque</a></li>
+                <li><a onclick = loadExample("safe_tricky"); href="javascript:void(0)">tricky</a></li>
+                <li><a onclick = loadExample("safe_rsa"); href="javascript:void(0)">rsa</a></li>
+                <li><a onclick = loadExample("safe_map"); href="javascript:void(0)">map</a></li>
+                <li><a onclick = loadExample("safe_mini_church"); href="javascript:void(0)">mini_church</a></li>
+                <li><a onclick = loadExample("safe_terauchi_mult_cps"); href="javascript:void(0)">terauchi_mult</a></li>
+                <li><a onclick = loadExample("safe_factorial_acc"); href="javascript:void(0)">factorial_acc</a></li>
+                <li><a onclick = loadExample("safe_even_odd"); href="javascript:void(0)">even_odd</a></li>
+                <li><a onclick = loadExample("safe_cpstak"); href="javascript:void(0)">cpstak</a></li>
+                <li><a onclick = loadExample("safe_fibonacci"); href="javascript:void(0)">fibonacci</a></li>
+                <li><a onclick = loadExample("safe_max"); href="javascript:void(0)">max</a></li>
+                <li><a onclick = loadExample("safe_neg"); href="javascript:void(0)">neg</a></li>
+                <li><a onclick = loadExample("safe_terauchi_sum_all"); href="javascript:void(0)">terauchi_sum_all</a></li>
+                <li><a onclick = loadExample("safe_ack"); href="javascript:void(0)">ack</a></li>
+                <li><a onclick = loadExample("safe_hrec"); href="javascript:void(0)">hrec</a></li>
+                <li><a onclick = loadExample("safe_terauchi_sum_acm"); href="javascript:void(0)">terauchi_sum_acm</a></li>
+                <li><a onclick = loadExample("safe_factorial"); href="javascript:void(0)">factorial</a></li>
+                <li><a onclick = loadExample("safe_terauchi_mult_all"); href="javascript:void(0)">terauchi_mult_all</a></li>
+                <li><a onclick = loadExample("safe_maybe_apply_negate"); href="javascript:void(0)">maybe_apply_negate</a></li>
+                <li><a onclick = loadExample("safe_weighted_avg"); href="javascript:void(0)">weighted_avg</a></li>
+                <li><a onclick = loadExample("safe_mult"); href="javascript:void(0)">mult</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="javascript:void(0)">Other</a>
+              <ul>
+                <li><a onclick = loadExample("safe_dvh_3"); href="javascript:void(0)">dvh_3</a></li>
+                <li><a onclick = loadExample("safe_ex_11"); href="javascript:void(0)">ex_11</a></li>
+                <li><a onclick = loadExample("safe_ex_06"); href="javascript:void(0)">ex_06</a></li>
+                <li><a onclick = loadExample("safe_incf"); href="javascript:void(0)">incf</a></li>
+                <li><a onclick = loadExample("safe_ex_12"); href="javascript:void(0)">ex_12</a></li>
+                <li><a onclick = loadExample("safe_ex_02"); href="javascript:void(0)">ex_02</a></li>
+                <li><a onclick = loadExample("safe_dvh_2"); href="javascript:void(0)">dvh_2</a></li>
+                <li><a onclick = loadExample("safe_last"); href="javascript:void(0)">last</a></li>
+                <li><a onclick = loadExample("safe_ex_05"); href="javascript:void(0)">ex_05</a></li>
+                <li><a onclick = loadExample("safe_ex_13"); href="javascript:void(0)">ex_13</a></li>
+                <li><a onclick = loadExample("safe_last_pair"); href="javascript:void(0)">last_pair</a></li>
+                <li><a onclick = loadExample("safe_guess"); href="javascript:void(0)">guess</a></li>
+                <li><a onclick = loadExample("safe_terauchi_boolflip"); href="javascript:void(0)">terauchi_boolflip</a></li>
+                <li><a onclick = loadExample("safe_subst"); href="javascript:void(0)">subst</a></li>
+                <li><a onclick = loadExample("safe_taut"); href="javascript:void(0)">taut</a></li>
+                <li><a onclick = loadExample("safe_intro3"); href="javascript:void(0)">intro3</a></li>
+                <li><a onclick = loadExample("safe_dvh_1"); href="javascript:void(0)">dvh_1</a></li>
+                <li><a onclick = loadExample("safe_sat_7"); href="javascript:void(0)">sat_7</a></li>
+                <li><a onclick = loadExample("safe_intro2"); href="javascript:void(0)">intro2</a></li>
+                <li><a onclick = loadExample("safe_id_dependent"); href="javascript:void(0)">id_dependent</a></li>
+                <li><a onclick = loadExample("safe_ex_04"); href="javascript:void(0)">ex_04</a></li>
+                <li><a onclick = loadExample("safe_fhnhn"); href="javascript:void(0)">fhnhn</a></li>
+                <li><a onclick = loadExample("safe_ex_07"); href="javascript:void(0)">ex_07</a></li>
+                <li><a onclick = loadExample("safe_ex_09"); href="javascript:void(0)">ex_09</a></li>
+                <li><a onclick = loadExample("safe_get_path"); href="javascript:void(0)">get_path</a></li>
+                <li><a onclick = loadExample("safe_r_file"); href="javascript:void(0)">r_file</a></li>
+                <li><a onclick = loadExample("safe_onto"); href="javascript:void(0)">onto</a></li>
+                <li><a onclick = loadExample("safe_repeat"); href="javascript:void(0)">repeat</a></li>
+                <li><a onclick = loadExample("safe_intro1"); href="javascript:void(0)">intro1</a></li>
+                <li><a onclick = loadExample("safe_inc_or_greet"); href="javascript:void(0)">inc_or_greet</a></li>
+                <li><a onclick = loadExample("safe_isnil"); href="javascript:void(0)">isnil</a></li>
+                <li><a onclick = loadExample("safe_ex_01"); href="javascript:void(0)">ex_01</a></li>
+                <li><a onclick = loadExample("safe_hors"); href="javascript:void(0)">hors</a></li>
+                <li><a onclick = loadExample("safe_tak"); href="javascript:void(0)">ex_07</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
     <div id="about">
       <div id="container">
-          Examples: <select id="examples" onChange="loadExample(this.options[this.selectedIndex].text)"></select>           
-          <form>
-            <textarea id="code" cols="120" rows="30" name="code"></textarea>
-          </form>
+        <form>
+          <textarea id="code" cols="120" rows="60" name="code"></textarea>
+        </form>
       </div>
       <div id="changer">
           <button id="btn_submit" autofocus="autofocus" type="button" onclick="copy();check()">Verify</button>
@@ -77,13 +254,13 @@
       </div>
       <script type="text/javascript">
         var myCodeMirror = CodeMirror.fromTextArea(code, {
+          viewportMargin: Infinity,
           lineNumbers: true, 
           matchBrackets: true,
-
-
         });
      </script>
-     <textarea id="console" cols="120" rows="30" name="console" style="display:none;"></textarea>
+     <textarea id="console" cols="120" rows="60" name="console" style="display:none;">
+     </textarea>
     </div>
   </body>
 </html>
