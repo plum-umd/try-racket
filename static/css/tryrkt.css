@@ -48,9 +48,8 @@ body {
 }
 
 #container {
-  width:710px;
- 
- background: #eee;
+  width:700px;
+  background: #eee;
 }
 
 #examples{
@@ -158,7 +157,8 @@ text-align: left;
   width: 700px;
   margin-top: 10px;
   margin-bottom: 10px;
-  padding: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   background: #E8E8FF;
 }
 
@@ -202,7 +202,7 @@ div.continue {
   text-align: left;
   background: #fff;
   width: 700px;
-  padding-top: 20px;
+  padding-top: 0px;
   margin-left: auto;
   margin-right: auto;
 } 
@@ -227,11 +227,13 @@ div.continue {
 #main_nav {
   text-align: center;
   background: #fff;
-  width: 710px;
-  padding-left: 10px;
+  width: 700px;
+  height: 100px;
+  padding-left: 0px;
   margin-left: auto;
   margin-right: auto;
   z-index: 990;
+  background: #eeeeee;
 }
 
   #main_nav ul {
